@@ -1,15 +1,65 @@
 import { Clock3, Mail, MapPin, Phone, Send } from "lucide-react";
+
 import { useState } from "react";
+
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+
+const API_URL = "http://localhost:5000/api/v1";
 
 const ContactPage = () => {
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const [loading, setLoading] = useState(false);
+
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    setSubmitted(true);
+    setLoading(true);
+    setError("");
+
+    const form = new FormData(event.currentTarget);
+
+    const payload = {
+      first_name: form.get("first_name"),
+      last_name: form.get("last_name"),
+      email: form.get("email"),
+      phone: form.get("phone"),
+      subject: form.get("subject"),
+      message: form.get("message"),
+    };
+
+    try {
+      const response = await fetch(`${API_URL}/contact`, {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        body: JSON.stringify(payload),
+      });
+
+      const result = await response.json();
+
+      if (!result.success) {
+        setError(result.message || "Unable to send message");
+
+        return;
+      }
+
+      setSubmitted(true);
+
+      event.currentTarget.reset();
+    } catch (error) {
+      console.error("Contact form error:", error);
+
+      setError("Unable to connect to server. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -24,7 +74,7 @@ const ContactPage = () => {
 
           <p>
             Whether you need help choosing the perfect piece or have a question
-            about your order, our team is here to assist.
+            about our jewellery, our team is here to assist.
           </p>
         </section>
 
@@ -36,7 +86,7 @@ const ContactPage = () => {
 
             <p className="contact-intro">
               Our jewellery specialists are available to answer questions about
-              products, sizing, orders, care and delivery.
+              products, materials, availability, care and private consultations.
             </p>
 
             <div className="contact-detail-list">
@@ -47,6 +97,7 @@ const ContactPage = () => {
 
                 <div>
                   <span>Email</span>
+
                   <a href="mailto:hello@mykajewels.com">hello@mykajewels.com</a>
                 </div>
               </div>
@@ -58,6 +109,7 @@ const ContactPage = () => {
 
                 <div>
                   <span>Phone</span>
+
                   <a href="tel:+919876543210">+91 98765 43210</a>
                 </div>
               </div>
@@ -126,11 +178,11 @@ const ContactPage = () => {
               <form className="contact-form" onSubmit={handleSubmit}>
                 <div className="contact-form-row">
                   <div className="contact-form-group">
-                    <label htmlFor="firstName">First Name</label>
+                    <label htmlFor="first_name">First Name</label>
 
                     <input
-                      id="firstName"
-                      name="firstName"
+                      id="first_name"
+                      name="first_name"
                       type="text"
                       placeholder="Your first name"
                       required
@@ -138,14 +190,13 @@ const ContactPage = () => {
                   </div>
 
                   <div className="contact-form-group">
-                    <label htmlFor="lastName">Last Name</label>
+                    <label htmlFor="last_name">Last Name</label>
 
                     <input
-                      id="lastName"
-                      name="lastName"
+                      id="last_name"
+                      name="last_name"
                       type="text"
                       placeholder="Your last name"
-                      required
                     />
                   </div>
                 </div>
@@ -176,15 +227,21 @@ const ContactPage = () => {
                       Select an enquiry
                     </option>
 
-                    <option value="product">Product Enquiry</option>
+                    <option value="Product Enquiry">Product Enquiry</option>
 
-                    <option value="order">Order Support</option>
+                    <option value="Jewellery Availability">
+                      Jewellery Availability
+                    </option>
 
-                    <option value="size">Sizing Assistance</option>
+                    <option value="Material & Care">Material & Care</option>
 
-                    <option value="custom">Bespoke Jewellery</option>
+                    <option value="Private Appointment">
+                      Private Appointment
+                    </option>
 
-                    <option value="other">Other</option>
+                    <option value="Custom Jewellery">Custom Jewellery</option>
+
+                    <option value="Other">Other</option>
                   </select>
                 </div>
 
@@ -200,9 +257,16 @@ const ContactPage = () => {
                   />
                 </div>
 
-                <button type="submit" className="contact-submit-button">
-                  Send Message
-                  <Send size={15} />
+                {error && <div className="contact-form-error">{error}</div>}
+
+                <button
+                  type="submit"
+                  className="contact-submit-button"
+                  disabled={loading}
+                >
+                  {loading ? "Sending..." : "Send Message"}
+
+                  {!loading && <Send size={15} />}
                 </button>
               </form>
             )}
@@ -223,13 +287,16 @@ const ContactPage = () => {
           </div>
 
           <a
-            href="mailto:hello@mykajewels.com?subject=Private Appointment"
+            href="https://wa.me/919876543210?text=Hello%20MYKA%2C%20I%20would%20like%20to%20request%20a%20private%20jewellery%20appointment."
+            target="_blank"
+            rel="noreferrer"
             className="primary-gold-button"
           >
             Request Appointment
           </a>
         </section>
       </main>
+
       <Footer />
     </>
   );

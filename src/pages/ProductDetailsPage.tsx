@@ -1,64 +1,219 @@
-import { Heart, Minus, Plus, ShoppingBag, Star } from "lucide-react";
-import { useMemo, useRef, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import Navbar from "../components/Navbar";
-import ProductCard from "../components/ProductCard";
-import { products } from "../data/products";
-import Footer from "../components/Footer";
+import { Heart, MessageCircle } from "lucide-react";
+
+import { useEffect, useRef, useState } from "react";
+
+import { Link, useNavigate, useParams } from "react-router-dom";
+
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+
+import Navbar from "../components/Navbar";
+import ProductCard from "../components/ProductCard";
+import Footer from "../components/Footer";
+
+import { getProductBySlug, getProducts } from "../api/products.api";
+
+import type { Product } from "../types/product";
 
 const ProductDetailsPage = () => {
   const { slug } = useParams();
 
-  const product = products.find((item) => item.slug === slug);
-
-  const [selectedSize, setSelectedSize] = useState(product?.sizes?.[0] || "");
-
-  const [quantity, setQuantity] = useState(1);
+  const navigate = useNavigate();
 
   const pageRef = useRef<HTMLDivElement>(null);
 
+  const [product, setProduct] = useState<Product | null>(null);
+
+  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+
+  const [loading, setLoading] = useState(true);
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const [authChecking, setAuthChecking] = useState(true);
+
+  const [inquiryLoading, setInquiryLoading] = useState(false);
+
+  const [isWishlisted, setIsWishlisted] = useState(false);
+
+  const [wishlistLoading, setWishlistLoading] = useState(false);
+
+  useEffect(() => {
+    const checkAuthentication = async () => {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        setIsLoggedIn(false);
+        setAuthChecking(false);
+        return;
+      }
+
+      try {
+        const response = await fetch("http://localhost:5003/api/v1/auth/me", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+          setIsLoggedIn(true);
+
+          // Refresh cached user
+          localStorage.setItem("user", JSON.stringify(result.data));
+        } else {
+          localStorage.removeItem("token");
+
+          localStorage.removeItem("user");
+
+          setIsLoggedIn(false);
+        }
+      } catch (error) {
+        console.error("Authentication check error:", error);
+
+        setIsLoggedIn(false);
+      } finally {
+        setAuthChecking(false);
+      }
+    };
+
+    checkAuthentication();
+  }, []);
+
+
+  /*
+   * LOAD PRODUCT
+   */
+
+  useEffect(() => {
+    const loadProduct = async () => {
+      if (!slug) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+
+        const response = await getProductBySlug(slug);
+
+        if (!response.success || !response.data) {
+          setProduct(null);
+          return;
+        }
+
+        const currentProduct = response.data as Product;
+
+        setProduct(currentProduct);
+
+        /*
+         * RELATED PRODUCTS
+         */
+
+        const relatedResponse = await getProducts({
+          limit: 8,
+        });
+
+        if (relatedResponse.success) {
+          const items: Product[] = relatedResponse.data || [];
+
+          setRelatedProducts(
+            items
+              .filter((item) => item.uuid !== currentProduct.uuid)
+              .slice(0, 4),
+          );
+        }
+      } catch (error) {
+        console.error("Load product error:", error);
+
+        setProduct(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProduct();
+  }, [slug]);
+
+  useEffect(() => {
+    const checkWishlist = async () => {
+      if (!product) return;
+
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        setIsWishlisted(false);
+        return;
+      }
+
+      try {
+        const response = await fetch("http://localhost:5003/api/v1/wishlist", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.status === 401) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+
+          setIsWishlisted(false);
+
+          return;
+        }
+
+        const result = await response.json();
+
+        if (!result.success) return;
+
+        const exists = (result.data || []).some(
+          (item: any) => item.product?.uuid === product.uuid,
+        );
+
+        setIsWishlisted(exists);
+      } catch (error) {
+        console.error("Check wishlist error:", error);
+      }
+    };
+
+    checkWishlist();
+  }, [product]);
+
+  /*
+   * ANIMATION
+   */
+
   useGSAP(
     () => {
+      if (!product) return;
+
       gsap.from(".product-gallery", {
         opacity: 0,
-        x: -30,
-        duration: 1.0,
-        ease: "power2.inOut",
+        x: -25,
+        duration: 0.8,
+        ease: "power2.out",
       });
 
       gsap.from(".product-info-inner", {
         opacity: 0,
-        x: 30,
-        duration: 1.0,
-        delay: 0.15,
-        ease: "power2.inOut",
+        x: 25,
+        duration: 0.8,
+        delay: 0.1,
+        ease: "power2.out",
       });
 
       gsap.from(".product-details-breadcrumb", {
         opacity: 0,
         y: -10,
         duration: 0.5,
-        ease: "power2.out",
       });
 
-      gsap.from(".related-heading > *", {
-        opacity: 0,
-        y: 20,
-        duration: 0.6,
-        stagger: 0.1,
-        delay: 0.5,
-        ease: "power2.out",
-      });
-
-      gsap.from(".related-products-section .product-card", {
+      gsap.from(".related-products-section", {
         opacity: 0,
         y: 25,
-        duration: 0.6,
-        stagger: 0.08,
-        delay: 0.65,
-        ease: "power2.out",
+        duration: 0.7,
+        delay: 0.4,
       });
     },
     {
@@ -67,11 +222,203 @@ const ProductDetailsPage = () => {
     },
   );
 
-  const relatedProducts = useMemo(() => {
-    if (!product) return [];
 
-    return products.filter((item) => item.id !== product.id).slice(0, 4);
-  }, [product]);
+  const handleWishlist = async () => {
+    if (!product) return;
+
+    const token = localStorage.getItem("token");
+
+    /*
+     * Not logged in
+     */
+    if (!token || !isLoggedIn) {
+      navigate(`/login?redirect=/products/${product.slug}`);
+
+      return;
+    }
+
+    try {
+      setWishlistLoading(true);
+
+      /*
+       * REMOVE FROM WISHLIST
+       */
+      if (isWishlisted) {
+        const response = await fetch(
+          `http://localhost:5003/api/v1/wishlist/${product.uuid}`,
+          {
+            method: "DELETE",
+
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+
+        const result = await response.json();
+
+        if (response.status === 401) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+
+          setIsLoggedIn(false);
+
+          navigate(`/login?redirect=/products/${product.slug}`);
+
+          return;
+        }
+
+        if (!result.success) {
+          alert(result.message || "Unable to remove product from wishlist");
+
+          return;
+        }
+
+        setIsWishlisted(false);
+
+        return;
+      }
+
+      /*
+       * ADD TO WISHLIST
+       */
+      const response = await fetch("http://localhost:5000/api/v1/wishlist", {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json",
+
+          Authorization: `Bearer ${token}`,
+        },
+
+        body: JSON.stringify({
+          product_uuid: product.uuid,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.status === 401) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+
+        setIsLoggedIn(false);
+
+        navigate(`/login?redirect=/products/${product.slug}`);
+
+        return;
+      }
+
+      if (!result.success) {
+        alert(result.message || "Unable to add product to wishlist");
+
+        return;
+      }
+
+      setIsWishlisted(true);
+    } catch (error) {
+      console.error("Wishlist error:", error);
+
+      alert("Unable to update wishlist.");
+    } finally {
+      setWishlistLoading(false);
+    }
+  };
+
+  /*
+   * WHATSAPP INQUIRY
+   */
+
+  const handleWhatsAppInquiry = async () => {
+    if (!product) return;
+
+    const token = localStorage.getItem("token");
+
+    if (!token || !isLoggedIn) {
+      navigate(`/login?redirect=/products/${product.slug}`);
+
+      return;
+    }
+
+    try {
+      setInquiryLoading(true);
+
+      const response = await fetch(
+        `http://localhost:5003/api/v1/inquiries/products/${product.uuid}`,
+        {
+          method: "POST",
+
+          headers: {
+            Authorization: `Bearer ${token}`,
+
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      const result = await response.json();
+
+      /*
+       * Session expired / invalid
+       */
+      if (response.status === 401) {
+        localStorage.removeItem("token");
+
+        localStorage.removeItem("user");
+
+        setIsLoggedIn(false);
+
+        navigate(`/login?redirect=/products/${product.slug}`);
+
+        return;
+      }
+
+      if (!result.success) {
+        alert(result.message || "Unable to create inquiry");
+
+        return;
+      }
+
+      /*
+       * Backend already records the
+       * inquiry before returning this URL.
+       */
+      if (result.data?.whatsapp_url) {
+        window.open(result.data.whatsapp_url, "_blank", "noopener,noreferrer");
+      }
+    } catch (error) {
+      console.error("WhatsApp inquiry error:", error);
+
+      alert("Unable to start WhatsApp inquiry.");
+    } finally {
+      setInquiryLoading(false);
+    }
+  };
+
+  /*
+   * LOADING
+   */
+
+  if (loading) {
+    return (
+      <>
+        <Navbar />
+
+        <main className="product-details-loading">
+          <div>
+            <span>MYKA</span>
+            <p>Loading jewellery...</p>
+          </div>
+        </main>
+
+        <Footer />
+      </>
+    );
+  }
+
+  /*
+   * NOT FOUND
+   */
 
   if (!product) {
     return (
@@ -85,12 +432,15 @@ const ProductDetailsPage = () => {
             Back to Jewellery
           </Link>
         </main>
+
+        <Footer />
       </>
     );
   }
 
-  const galleryImages =
-    product.images.length > 0 ? product.images : [product.image];
+  const galleryImages = product.images || [];
+
+  const category = product.categories?.[0];
 
   return (
     <>
@@ -98,12 +448,18 @@ const ProductDetailsPage = () => {
 
       <main ref={pageRef}>
         <section className="product-details-section">
+          {/* BREADCRUMB */}
+
           <div className="product-details-breadcrumb">
             <Link to="/products">Jewellery</Link>
 
-            <span>/</span>
+            {category && (
+              <>
+                <span>/</span>
 
-            <span>{product.category}</span>
+                <span>{category.name}</span>
+              </>
+            )}
 
             <span>/</span>
 
@@ -111,51 +467,39 @@ const ProductDetailsPage = () => {
           </div>
 
           <div className="product-details-layout">
-            {/* LEFT GALLERY */}
+            {/* GALLERY */}
 
             <div className="product-gallery">
-              <div className="gallery-grid">
-                {galleryImages.map((image, index) => (
-                  <div
-                    className="gallery-image-wrapper"
-                    key={`${image}-${index}`}
-                  >
-                    <img
-                      src={image}
-                      alt={`${product.name} ${index + 1}`}
-                      className="gallery-image"
-                    />
-                  </div>
-                ))}
-
-                {galleryImages.length === 1 && (
-                  <>
-                    <div className="gallery-image-wrapper secondary-gallery">
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        className="gallery-image"
-                      />
-                    </div>
-
-                    <div className="gallery-image-wrapper secondary-gallery">
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        className="gallery-image"
-                      />
-                    </div>
-                  </>
-                )}
-              </div>
+              {galleryImages.length > 0 ? (
+                <div className="gallery-grid">
+                  {galleryImages
+                    .sort((a, b) => a.sort_order - b.sort_order)
+                    .map((image, index) => (
+                      <div
+                        className="gallery-image-wrapper"
+                        key={image.uuid || index}
+                      >
+                        <img
+                          src={image.data_uri}
+                          alt={image.alt_text || `${product.name} ${index + 1}`}
+                          className="gallery-image"
+                        />
+                      </div>
+                    ))}
+                </div>
+              ) : (
+                <div className="product-details-no-image">
+                  No image available
+                </div>
+              )}
             </div>
 
-            {/* RIGHT PRODUCT INFO */}
+            {/* PRODUCT INFORMATION */}
 
             <aside className="product-info">
               <div className="product-info-inner">
                 <p className="product-details-collection">
-                  {product.collection}
+                  {category?.name || "MYKA Collection"}
                 </p>
 
                 <div className="product-title-row">
@@ -163,137 +507,215 @@ const ProductDetailsPage = () => {
 
                   <button
                     type="button"
-                    className="details-wishlist-button"
-                    aria-label="Add to wishlist"
+                    className={`details-wishlist-button ${
+                      isWishlisted ? "active" : ""
+                    }`}
+                    onClick={handleWishlist}
+                    disabled={wishlistLoading}
+                    aria-label={
+                      isWishlisted ? "Remove from wishlist" : "Add to wishlist"
+                    }
+                    title={
+                      isWishlisted ? "Remove from wishlist" : "Add to wishlist"
+                    }
                   >
-                    <Heart size={21} />
+                    <Heart
+                      size={21}
+                      fill={isWishlisted ? "currentColor" : "none"}
+                    />
                   </button>
                 </div>
 
-                <p className="details-price">
-                  ₹{product.price.toLocaleString("en-IN")}
+                {/* PRICE */}
+
+                <div className="details-price-wrapper">
+                  <p className="details-price">
+                    {product.price
+                      ? `₹${Number(product.price).toLocaleString("en-IN")}`
+                      : "Price on request"}
+                  </p>
+
+                  {product.compare_at_price &&
+                    Number(product.compare_at_price) >
+                      Number(product.price || 0) && (
+                      <span className="details-old-price">
+                        ₹
+                        {Number(product.compare_at_price).toLocaleString(
+                          "en-IN",
+                        )}
+                      </span>
+                    )}
+                </div>
+
+                {/* STOCK */}
+
+                <div className="product-stock-row">
+                  <span
+                    className={`product-stock ${
+                      product.stock_status === "IN_STOCK"
+                        ? "in-stock"
+                        : product.stock_status === "OUT_OF_STOCK"
+                          ? "out-of-stock"
+                          : "on-request"
+                    }`}
+                  >
+                    {product.stock_status === "IN_STOCK"
+                      ? "In Stock"
+                      : product.stock_status === "OUT_OF_STOCK"
+                        ? "Out of Stock"
+                        : "Available on Request"}
+                  </span>
+
+                  {product.sku && (
+                    <span className="product-sku">SKU: {product.sku}</span>
+                  )}
+                </div>
+
+                {/* DESCRIPTION */}
+
+                <p className="product-description">
+                  {product.description ||
+                    product.short_description ||
+                    "A timeless piece from the MYKA jewellery collection."}
                 </p>
-
-                <div className="rating-row">
-                  <div className="stars">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <Star key={star} size={13} fill="currentColor" />
-                    ))}
-                  </div>
-
-                  <span>4.9</span>
-
-                  <span className="rating-divider">•</span>
-
-                  <button type="button" className="reviews-button">
-                    18 Reviews
-                  </button>
-                </div>
-
-                <p className="product-description">{product.description}</p>
 
                 <div className="details-divider" />
 
-                <div className="product-option-section">
-                  <div className="option-heading-row">
-                    <span>Material</span>
+                {/* MATERIAL */}
 
-                    <span className="selected-option">{product.material}</span>
-                  </div>
-
-                  <div className="material-options">
-                    <button type="button" className="material-option active">
-                      <span className="material-circle gold-circle" />
-                      Yellow Gold
-                    </button>
-
-                    <button type="button" className="material-option">
-                      <span className="material-circle rose-circle" />
-                      Rose Gold
-                    </button>
-
-                    <button type="button" className="material-option">
-                      <span className="material-circle white-circle" />
-                      White Gold
-                    </button>
-                  </div>
-                </div>
-
-                {product.sizes.length > 0 && (
+                {product.material && (
                   <div className="product-option-section">
                     <div className="option-heading-row">
-                      <span>Select Size</span>
+                      <span>Material</span>
 
-                      <button type="button" className="size-guide">
-                        Size Guide
-                      </button>
-                    </div>
-
-                    <div className="size-options">
-                      {product.sizes.map((size) => (
-                        <button
-                          type="button"
-                          key={size}
-                          className={`size-button ${
-                            selectedSize === size ? "active" : ""
-                          }`}
-                          onClick={() => setSelectedSize(size)}
-                        >
-                          {size}
-                        </button>
-                      ))}
+                      <span className="selected-option">
+                        {product.material}
+                      </span>
                     </div>
                   </div>
                 )}
 
-                <div className="purchase-row">
-                  <div className="quantity-selector">
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setQuantity((current) => Math.max(1, current - 1))
-                      }
-                    >
-                      <Minus size={15} />
-                    </button>
+                {/* METAL COLOR */}
 
-                    <span>{quantity}</span>
+                {product.metal_color && (
+                  <div className="product-option-section">
+                    <div className="option-heading-row">
+                      <span>Metal Colour</span>
 
-                    <button
-                      type="button"
-                      onClick={() => setQuantity((current) => current + 1)}
-                    >
-                      <Plus size={15} />
-                    </button>
+                      <span className="selected-option">
+                        {product.metal_color}
+                      </span>
+                    </div>
                   </div>
+                )}
 
-                  <button type="button" className="add-to-bag-button">
-                    <ShoppingBag size={17} />
-                    Add to Bag
-                  </button>
+                {/* WEIGHT */}
+
+                {product.weight_grams && (
+                  <div className="product-option-section">
+                    <div className="option-heading-row">
+                      <span>Weight</span>
+
+                      <span className="selected-option">
+                        {product.weight_grams} grams
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                {/* WHATSAPP */}
+
+                <div className="whatsapp-inquiry-section">
+                  {authChecking ? (
+                    <button
+                      type="button"
+                      className="whatsapp-inquiry-button"
+                      disabled
+                    >
+                      Checking account...
+                    </button>
+                  ) : isLoggedIn ? (
+                    <>
+                      <button
+                        type="button"
+                        className="whatsapp-inquiry-button"
+                        onClick={handleWhatsAppInquiry}
+                        disabled={
+                          inquiryLoading ||
+                          product.stock_status === "OUT_OF_STOCK"
+                        }
+                      >
+                        <MessageCircle size={19} />
+
+                        {inquiryLoading
+                          ? "Opening WhatsApp..."
+                          : "Enquire on WhatsApp"}
+                      </button>
+
+                      <p>
+                        Have a question about this piece? Contact our jewellery
+                        team directly on WhatsApp.
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        type="button"
+                        className="login-to-inquire-button"
+                        onClick={() =>
+                          navigate(`/login?redirect=/products/${product.slug}`)
+                        }
+                      >
+                        Login to Enquire
+                      </button>
+
+                      <p>
+                        Please sign in to enquire about this jewellery piece.
+                      </p>
+                    </>
+                  )}
                 </div>
 
-                <p className="shipping-note">
-                  Complimentary insured shipping on all orders.
-                </p>
+                {/* DETAILS */}
 
                 <div className="product-accordions">
                   <details open>
                     <summary>Product Details</summary>
 
                     <div className="accordion-content">
-                      <p>
-                        Crafted with attention to detail and designed for
-                        timeless everyday elegance.
-                      </p>
+                      {product.short_description && (
+                        <p>{product.short_description}</p>
+                      )}
 
-                      <p>
-                        <strong>Material:</strong> {product.material}
-                      </p>
+                      {product.material && (
+                        <p>
+                          <strong>Material:</strong> {product.material}
+                        </p>
+                      )}
 
-                      <p>
-                        <strong>Collection:</strong> {product.collection}
-                      </p>
+                      {product.metal_color && (
+                        <p>
+                          <strong>Metal Colour:</strong> {product.metal_color}
+                        </p>
+                      )}
+
+                      {product.weight_grams && (
+                        <p>
+                          <strong>Weight:</strong> {product.weight_grams} grams
+                        </p>
+                      )}
+
+                      {category && (
+                        <p>
+                          <strong>Collection:</strong> {category.name}
+                        </p>
+                      )}
+
+                      {product.sku && (
+                        <p>
+                          <strong>SKU:</strong> {product.sku}
+                        </p>
+                      )}
                     </div>
                   </details>
 
@@ -310,12 +732,13 @@ const ProductDetailsPage = () => {
                   </details>
 
                   <details>
-                    <summary>Shipping & Returns</summary>
+                    <summary>Need Assistance?</summary>
 
                     <div className="accordion-content">
                       <p>
-                        Orders are carefully packaged and dispatched with
-                        insured delivery.
+                        Contact our team on WhatsApp for product information,
+                        availability or any questions about this jewellery
+                        piece.
                       </p>
                     </div>
                   </details>
@@ -327,25 +750,30 @@ const ProductDetailsPage = () => {
 
         {/* RELATED PRODUCTS */}
 
-        <section className="related-products-section">
-          <div className="related-heading">
-            <p className="section-eyebrow">CURATED FOR YOU</p>
+        {relatedProducts.length > 0 && (
+          <section className="related-products-section">
+            <div className="related-heading">
+              <p className="section-eyebrow">CURATED FOR YOU</p>
 
-            <h2>You May Also Like</h2>
+              <h2>You May Also Like</h2>
 
-            <p>
-              Complete your collection with pieces selected to complement this
-              design.
-            </p>
-          </div>
+              <p>
+                Discover more pieces selected from our jewellery collection.
+              </p>
+            </div>
 
-          <div className="product-grid">
-            {relatedProducts.map((relatedProduct) => (
-              <ProductCard key={relatedProduct.id} product={relatedProduct} />
-            ))}
-          </div>
-        </section>
+            <div className="product-grid">
+              {relatedProducts.map((relatedProduct) => (
+                <ProductCard
+                  key={relatedProduct.uuid}
+                  product={relatedProduct}
+                />
+              ))}
+            </div>
+          </section>
+        )}
       </main>
+
       <Footer />
     </>
   );

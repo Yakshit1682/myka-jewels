@@ -1,23 +1,68 @@
+// src/pages/ProductsPage.tsx
+
 import { ChevronDown, SlidersHorizontal } from "lucide-react";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 
 import Navbar from "../components/Navbar";
 import ProductCard from "../components/ProductCard";
 import Footer from "../components/Footer";
-import { products } from "../data/products";
 
-// gsap.registerPlugin(ScrollTrigger);
+import { getProducts } from "../api/products.api";
+import { getCategories } from "../api/categories.api";
+
+import type { Product, Category } from "../types/product";
 
 const ProductsPage = () => {
   const pageRef = useRef<HTMLDivElement>(null);
 
+  const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+
+  const [loading, setLoading] = useState(true);
+
+  const loadProducts = async (category?: string) => {
+    try {
+      setLoading(true);
+
+      const response = await getProducts({
+        category: category || undefined,
+        limit: 50,
+      });
+
+      if (response.success) {
+        setProducts(response.data || []);
+      }
+    } catch (error) {
+      console.error("Load products error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadCategories = async () => {
+    try {
+      const response = await getCategories();
+
+      if (response.success) {
+        setCategories(response.data || []);
+      }
+    } catch (error) {
+      console.error("Load categories error:", error);
+    }
+  };
+
+  useEffect(() => {
+    loadCategories();
+    loadProducts();
+  }, []);
+
   useGSAP(
     () => {
-      // Hero
       gsap.from(".products-hero > *", {
         opacity: 0,
         y: 20,
@@ -26,7 +71,6 @@ const ProductsPage = () => {
         ease: "power2.out",
       });
 
-      // Toolbar
       gsap.from(".products-toolbar", {
         opacity: 0,
         y: 15,
@@ -34,21 +78,36 @@ const ProductsPage = () => {
         delay: 0.3,
         ease: "power2.out",
       });
-
-      // Product cards
-      gsap.from(".product-card", {
-        opacity: 0,
-        y: 25,
-        duration: 0.6,
-        delay: 0.4,
-        stagger: 0.08,
-        ease: "power2.out",
-      });
     },
     {
       scope: pageRef,
     },
   );
+
+  useEffect(() => {
+    if (products.length === 0) return;
+
+    gsap.fromTo(
+      ".product-card",
+      {
+        opacity: 0,
+        y: 25,
+      },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.55,
+        stagger: 0.06,
+        ease: "power2.out",
+      },
+    );
+  }, [products]);
+
+  const handleCategory = async (slug: string) => {
+    setSelectedCategory(slug);
+
+    await loadProducts(slug);
+  };
 
   return (
     <>
@@ -68,15 +127,22 @@ const ProductsPage = () => {
           </p>
 
           <div className="category-nav">
-            <button className="active">All Jewellery</button>
+            <button
+              className={selectedCategory === "" ? "active" : ""}
+              onClick={() => handleCategory("")}
+            >
+              All Jewellery
+            </button>
 
-            <button>Rings</button>
-
-            <button>Earrings</button>
-
-            <button>Necklaces</button>
-
-            <button>Bracelets</button>
+            {categories.map((category) => (
+              <button
+                key={category.uuid}
+                className={selectedCategory === category.slug ? "active" : ""}
+                onClick={() => handleCategory(category.slug)}
+              >
+                {category.name}
+              </button>
+            ))}
           </div>
         </section>
 
@@ -95,11 +161,21 @@ const ProductsPage = () => {
             </button>
           </div>
 
-          <div className="product-grid">
-            {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+          {loading ? (
+            <div className="products-loading">Loading jewellery...</div>
+          ) : (
+            <div className="product-grid">
+              {products.map((product) => (
+                <ProductCard key={product.uuid} product={product} />
+              ))}
+            </div>
+          )}
+
+          {!loading && products.length === 0 && (
+            <div className="products-empty">
+              No jewellery found in this collection.
+            </div>
+          )}
         </section>
       </main>
 

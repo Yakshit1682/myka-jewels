@@ -1,11 +1,17 @@
-import { ArrowRight } from "lucide-react";
+import { Heart, UserRound } from "lucide-react";
+
 import { FaFacebookF, FaInstagram } from "react-icons/fa";
+
 import { Link } from "react-router-dom";
 
 const Footer = () => {
+  const token = localStorage.getItem("token");
+
   return (
     <footer className="luxury-footer">
       <div className="footer-top">
+        {/* BRAND */}
+
         <div className="footer-brand">
           <Link to="/" className="footer-logo">
             <div className="footer-logo-circle">MK</div>
@@ -29,6 +35,8 @@ const Footer = () => {
           </div>
         </div>
 
+        {/* SHOP */}
+
         <div className="footer-links-column">
           <h4>Shop</h4>
 
@@ -43,56 +51,44 @@ const Footer = () => {
           <Link to="/products?category=Bracelets">Bracelets</Link>
         </div>
 
+        {/* MYKA */}
+
         <div className="footer-links-column">
-          <h4>Discover</h4>
+          <h4>MYKA</h4>
 
-          <Link to="/about">Our Story</Link>
+          <Link to="/">Home</Link>
 
-          <Link to="/about">Craftsmanship</Link>
+          <Link to="/about">About Us</Link>
+
+          <Link to="/contact">Contact Us</Link>
 
           <Link to="/products">Collections</Link>
-
-          <Link to="/contact">Contact</Link>
         </div>
+
+        {/* ACCOUNT */}
 
         <div className="footer-links-column">
-          <h4>Customer Care</h4>
+          <h4>My Account</h4>
 
-          <Link to="/contact">Shipping & Returns</Link>
+          {token ? (
+            <>
+              <Link to="/profile">
+                <UserRound size={13} />
+                My Profile
+              </Link>
 
-          <Link to="/contact">Jewellery Care</Link>
+              <Link to="/wishlist">
+                <Heart size={13} />
+                My Wishlist
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link to="/login">Login</Link>
 
-          <Link to="/contact">Size Guide</Link>
-
-          <Link to="/contact">FAQ</Link>
-        </div>
-
-        <div className="footer-newsletter">
-          <h4>Stay Connected</h4>
-
-          <p>
-            Discover new collections, private events and stories from the world
-            of MYKA.
-          </p>
-
-          <form
-            className="footer-newsletter-form"
-            onSubmit={(event) => event.preventDefault()}
-          >
-            <input
-              type="email"
-              placeholder="Email address"
-              aria-label="Email address"
-            />
-
-            <button type="submit" aria-label="Subscribe">
-              <ArrowRight size={16} />
-            </button>
-          </form>
-
-          <span className="footer-newsletter-note">
-            Subscribe to our jewellery journal.
-          </span>
+              <Link to="/register">Create Account</Link>
+            </>
+          )}
         </div>
       </div>
 
@@ -102,14 +98,6 @@ const Footer = () => {
         <span>
           © {new Date().getFullYear()} MYKA Jewels. All rights reserved.
         </span>
-
-        <div className="footer-bottom-links">
-          <a href="#">Privacy Policy</a>
-
-          <a href="#">Terms & Conditions</a>
-
-          <a href="#">Cookies</a>
-        </div>
 
         <div className="footer-location">
           <span>India</span>

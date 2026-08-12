@@ -1,6 +1,6 @@
 import { ArrowRight, Gem, ShieldCheck, Sparkles, Truck } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -9,14 +9,38 @@ import { useGSAP } from "@gsap/react";
 import Navbar from "../components/Navbar";
 import ProductCard from "../components/ProductCard";
 import Footer from "../components/Footer";
-import { products } from "../data/products";
+import { getSignatureProducts } from "../api/products.api";
+
+import type { Product } from "../types/product";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const HomePage = () => {
-  const featuredProducts = products.slice(0, 4);
+  const [signatureProducts, setSignatureProducts] = useState<Product[]>([]);
+
+  const [signatureLoading, setSignatureLoading] = useState(true);
 
   const pageRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const loadSignatureProducts = async () => {
+      try {
+        setSignatureLoading(true);
+
+        const response = await getSignatureProducts();
+
+        if (response.success) {
+          setSignatureProducts(response.data || []);
+        }
+      } catch (error) {
+        console.error("Signature products error:", error);
+      } finally {
+        setSignatureLoading(false);
+      }
+    };
+
+    loadSignatureProducts();
+  }, []);
 
   useGSAP(
     () => {
@@ -462,11 +486,17 @@ const HomePage = () => {
             </p>
           </div>
 
-          <div className="product-grid">
-            {featuredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+          {signatureLoading ? (
+            <div className="signature-loading">
+              Discovering our signature pieces...
+            </div>
+          ) : (
+            <div className="product-grid">
+              {signatureProducts.map((product) => (
+                <ProductCard key={product.uuid} product={product} />
+              ))}
+            </div>
+          )}
 
           <div className="center-button-wrapper">
             <Link to="/products" className="outline-luxury-button">
