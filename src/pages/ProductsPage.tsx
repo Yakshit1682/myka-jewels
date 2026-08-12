@@ -87,7 +87,7 @@ const ProductsPage = () => {
   useEffect(() => {
     if (products.length === 0) return;
 
-    gsap.fromTo(
+    const tween = gsap.fromTo(
       ".product-card",
       {
         opacity: 0,
@@ -101,6 +101,10 @@ const ProductsPage = () => {
         ease: "power2.out",
       },
     );
+
+    return () => {
+      tween.kill();
+    };
   }, [products]);
 
   const handleCategory = async (slug: string) => {

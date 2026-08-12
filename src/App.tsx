@@ -20,6 +20,8 @@ import AdminContacts from "./admin/pages/AdminContacts";
 import AdminUsers from "./admin/pages/AdminUsers";
 import AdminLogin from "./admin/pages/AdminLogin";
 import AdminRoute from "./admin/AdminRoute";
+import NotFoundPage from "./pages/NotFoundPage";
+import BackToTop from "./components/BackToTop";
 
 function App() {
   return (
@@ -58,7 +60,9 @@ function App() {
             <Route path="users" element={<AdminUsers />} />
           </Route>
         </Route>
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
+      <BackToTop />
     </BrowserRouter>
   );
 }

@@ -2,7 +2,7 @@ import { Navigate, Outlet } from "react-router-dom";
 
 import { useEffect, useState } from "react";
 
-const API_URL = "http://localhost:5000/api/v1";
+const API_URL = "http://localhost:5003/api/v1";
 
 type AuthState = "loading" | "authorized" | "unauthorized";
 

@@ -5763,3 +5763,625 @@ a {
   opacity: 0.55;
   cursor: wait;
 }
+
+.product-zoom-layout {
+  width: 100%;
+  height: 100%;
+
+  position: relative;
+}
+
+.product-zoom-image {
+  width: 100%;
+  height: 100%;
+
+  position: relative;
+
+  overflow: hidden;
+
+  cursor: crosshair;
+}
+
+.product-zoom-image img {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  object-fit: cover;
+}
+
+.product-zoom-lens {
+  width: 150px;
+  height: 150px;
+
+  position: absolute;
+
+  pointer-events: none;
+
+  transform:
+    translate(-50%, -50%);
+
+  border:
+    1px solid rgba(181,
+      138,
+      74,
+      0.8);
+
+  background:
+    rgba(255,
+      255,
+      255,
+      0.25);
+}
+
+.product-zoom-result {
+  width: 520px;
+  height: 520px;
+
+  position: absolute;
+
+  top: 0;
+  left: calc(100% + 18px);
+
+  z-index: 100;
+
+  border:
+    1px solid #ddd6cc;
+
+  background-color: white;
+
+  background-repeat:
+    no-repeat;
+
+  box-shadow:
+    0 18px 50px rgba(0, 0, 0, 0.12);
+
+  pointer-events: none;
+}
+
+.product-gallery,
+.gallery-grid,
+.gallery-image-wrapper {
+  overflow: visible;
+}
+
+.gallery-image-wrapper:hover {
+  position: relative;
+  z-index: 50;
+}
+
+.navbar {
+  width: 100%;
+  min-height: 82px;
+
+  padding: 0 4%;
+
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+
+  position: relative;
+  z-index: 100;
+
+  background: white;
+
+  border-bottom: 1px solid #eee8df;
+}
+
+.navbar-left,
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.navbar-right {
+  justify-content: flex-end;
+}
+
+.logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  text-decoration: none;
+}
+
+.logo-symbol {
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid var(--gold);
+  border-radius: 50%;
+
+  color: var(--gold);
+
+  font-family: "Cormorant Garamond", serif;
+}
+
+.logo-name {
+  margin-top: 3px;
+
+  color: var(--gold);
+
+  font-family: "Cormorant Garamond", serif;
+  font-size: 16px;
+
+  letter-spacing: 3px;
+}
+
+.logo small {
+  font-size: 6px;
+  letter-spacing: 2px;
+}
+
+.mobile-menu-button {
+  display: none;
+}
+
+/* MOBILE */
+
+@media (max-width: 900px) {
+  .navbar {
+    min-height: 68px;
+
+    padding: 0 14px;
+
+    grid-template-columns: 1fr auto 1fr;
+  }
+
+  .desktop-nav {
+    display: none;
+  }
+
+  .mobile-menu-button {
+    display: flex;
+  }
+
+  .desktop-only-action {
+    display: none;
+  }
+
+  .navbar-left {
+    justify-content: flex-start;
+  }
+
+  .navbar-right {
+    justify-content: flex-end;
+    gap: 5px;
+  }
+
+  .navbar-auth-links {
+    display: flex;
+    align-items: center;
+  }
+
+  .navbar-register-link {
+    display: none;
+  }
+
+  .navbar-login-link {
+    width: 36px;
+    height: 36px;
+
+    padding: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .navbar-login-link span {
+    display: none;
+  }
+
+  .navbar-profile-link {
+    width: 36px;
+    height: 36px;
+
+    padding: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .navbar-profile-link span {
+    display: none;
+  }
+
+  .logo-symbol {
+    width: 31px;
+    height: 31px;
+
+    font-size: 12px;
+  }
+
+  .logo-name {
+    font-size: 13px;
+    letter-spacing: 2px;
+  }
+
+  .logo small {
+    font-size: 5px;
+  }
+}
+
+/* MOBILE DRAWER */
+
+.mobile-nav-overlay {
+  position: fixed;
+  inset: 0;
+
+  z-index: 1000;
+
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.mobile-nav-panel {
+  width: min(330px, 88vw);
+  height: 100%;
+
+  padding: 25px;
+
+  background: #fff;
+
+  box-shadow:
+    8px 0 35px rgba(0, 0, 0, 0.12);
+
+  animation:
+    mobileMenuSlide 0.3s ease;
+}
+
+@keyframes mobileMenuSlide {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+.mobile-nav-header {
+  padding-bottom: 22px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  border-bottom: 1px solid #ece6de;
+}
+
+.mobile-nav-logo {
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-nav-logo span {
+  color: var(--gold);
+
+  font-family: "Cormorant Garamond", serif;
+  font-size: 22px;
+  letter-spacing: 4px;
+}
+
+.mobile-nav-logo small {
+  margin-top: 2px;
+
+  color: #999188;
+
+  font-size: 6px;
+  letter-spacing: 2px;
+}
+
+.mobile-nav-close {
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid #e4ded6;
+
+  background: white;
+}
+
+.mobile-nav-links {
+  padding-top: 25px;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-nav-links a,
+.mobile-nav-links button {
+  min-height: 52px;
+
+  display: flex;
+  align-items: center;
+
+  border: 0;
+  border-bottom: 1px solid #eee9e2;
+
+  background: transparent;
+  color: #332f2b;
+
+  font-family: inherit;
+  font-size: 11px;
+
+  text-align: left;
+
+  text-transform: uppercase;
+  letter-spacing: 1.1px;
+}
+
+.mobile-nav-links a:hover,
+.mobile-nav-links button:hover {
+  color: var(--gold);
+}
+
+
+.not-found-page {
+  min-height: calc(100vh - 80px);
+
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 100px 20px;
+
+  overflow: hidden;
+
+  background:
+    radial-gradient(circle at center,
+      #faf7f1 0%,
+      #f7f2ea 45%,
+      #f4eee5 100%);
+}
+
+.not-found-content {
+  width: 100%;
+  max-width: 650px;
+
+  position: relative;
+  z-index: 2;
+
+  text-align: center;
+}
+
+.not-found-icon {
+  width: 58px;
+  height: 58px;
+
+  margin: 0 auto 25px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid rgba(181, 138, 74, 0.4);
+
+  border-radius: 50%;
+
+  color: var(--gold);
+}
+
+.not-found-number {
+  margin: 10px 0 -15px;
+
+  color:
+    rgba(181, 138, 74, 0.13);
+
+  font-family:
+    "Cormorant Garamond",
+    serif;
+
+  font-size: clamp(130px,
+      20vw,
+      220px);
+
+  font-weight: 400;
+
+  line-height: 0.9;
+
+  letter-spacing: -8px;
+}
+
+.not-found-content h1 {
+  margin: 0;
+
+  color: #302b26;
+
+  font-family:
+    "Cormorant Garamond",
+    serif;
+
+  font-size: clamp(34px,
+      5vw,
+      52px);
+
+  font-weight: 500;
+
+  line-height: 1.05;
+}
+
+.not-found-description {
+  max-width: 460px;
+
+  margin: 22px auto 32px;
+
+  color: #817970;
+
+  font-size: 11px;
+
+  line-height: 1.8;
+
+  letter-spacing: 0.3px;
+}
+
+.not-found-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 25px;
+}
+
+.not-found-shop-link {
+  position: relative;
+
+  padding: 10px 0;
+
+  color: #403a34;
+
+  font-size: 9px;
+  font-weight: 600;
+
+  text-transform: uppercase;
+  letter-spacing: 1.3px;
+}
+
+.not-found-shop-link::after {
+  content: "";
+
+  width: 100%;
+  height: 1px;
+
+  position: absolute;
+  bottom: 5px;
+  left: 0;
+
+  background: var(--gold);
+
+  transform: scaleX(0);
+  transform-origin: right;
+
+  transition:
+    transform 0.3s ease;
+}
+
+.not-found-shop-link:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+.not-found-decoration {
+  position: absolute;
+
+  color:
+    rgba(181, 138, 74, 0.22);
+
+  font-size: 28px;
+}
+
+.not-found-decoration.left {
+  top: 30%;
+  left: 12%;
+}
+
+.not-found-decoration.right {
+  right: 12%;
+  bottom: 27%;
+}
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+  .not-found-page {
+    min-height: 75vh;
+
+    padding: 70px 20px;
+  }
+
+  .not-found-number {
+    font-size: 120px;
+    letter-spacing: -5px;
+  }
+
+  .not-found-content h1 {
+    font-size: 34px;
+  }
+
+  .not-found-actions {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .not-found-decoration {
+    display: none;
+  }
+}
+
+.back-to-top {
+  position: fixed;
+
+  right: 28px;
+  bottom: 28px;
+
+  width: 46px;
+  height: 46px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid #b58a4a;
+  border-radius: 50%;
+
+  background: #fff;
+
+  color: #b58a4a;
+
+  cursor: pointer;
+
+  z-index: 999;
+
+  opacity: 0;
+  visibility: hidden;
+
+  transform: translateY(15px);
+
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease,
+    visibility 0.3s ease,
+    background 0.3s ease,
+    color 0.3s ease;
+}
+
+.back-to-top.visible {
+  opacity: 1;
+  visibility: visible;
+
+  transform: translateY(0);
+}
+
+.back-to-top:hover {
+  background: #b58a4a;
+  color: #fff;
+
+  transform: translateY(-3px);
+}
+
+.back-to-top:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+  .back-to-top {
+    width: 42px;
+    height: 42px;
+
+    right: 18px;
+    bottom: 18px;
+  }
+}

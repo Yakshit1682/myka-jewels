@@ -13,6 +13,9 @@ import Footer from "../components/Footer";
 
 import { getProductBySlug, getProducts } from "../api/products.api";
 
+// import ImageMagnifier from "../components/ImageMagnifier";
+import ProductImageZoom from "../components/ProductImageZoom";
+
 import type { Product } from "../types/product";
 
 const ProductDetailsPage = () => {
@@ -282,7 +285,7 @@ const ProductDetailsPage = () => {
       /*
        * ADD TO WISHLIST
        */
-      const response = await fetch("http://localhost:5000/api/v1/wishlist", {
+      const response = await fetch("http://localhost:5003/api/v1/wishlist", {
         method: "POST",
 
         headers: {
@@ -480,9 +483,11 @@ const ProductDetailsPage = () => {
                         key={image.uuid || index}
                       >
                         <img
+                          //ProductImageZoom
                           src={image.data_uri}
                           alt={image.alt_text || `${product.name} ${index + 1}`}
                           className="gallery-image"
+                          // zoom={2.5}
                         />
                       </div>
                     ))}

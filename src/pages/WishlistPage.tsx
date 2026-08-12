@@ -9,7 +9,7 @@ import Footer from "../components/Footer";
 
 import type { Product } from "../types/product";
 
-const API_URL = "http://localhost:5000/api/v1";
+const API_URL = "http://localhost:5003/api/v1";
 
 type WishlistItem = {
   id: number;
@@ -99,7 +99,7 @@ const WishlistPage = () => {
     <>
       <Navbar />
 
-      <main className="wishlist-page">
+      <main className="wishlist-page" style={{ minHeight: "calc(100vh - 200px)" }}>
         <section className="wishlist-header">
           <p className="home-eyebrow">YOUR COLLECTION</p>
 
