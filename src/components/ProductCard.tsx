@@ -8,7 +8,7 @@ interface ProductCardProps {
   product: Product;
 }
 
-const API_URL = "http://localhost:5003/api/v1";
+const API_URL = import.meta.env.VITE_API_URL;
 
 const ProductCard = ({ product }: ProductCardProps) => {
   const navigate = useNavigate();

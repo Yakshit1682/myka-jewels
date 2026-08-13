@@ -1,11 +1,15 @@
 // src/api/products.api.ts
 
-const API_URL = "http://localhost:5003/api/v1";
+const API_URL = import.meta.env.VITE_API_URL;
 
 export const getProducts = async (params?: {
   category?: string;
   featured?: boolean;
   search?: string;
+  stock_status?: string;
+  min_price?: number;
+  max_price?: number;
+  sort?: string;
   page?: number;
   limit?: number;
 }) => {
@@ -23,6 +27,22 @@ export const getProducts = async (params?: {
     query.set("search", params.search);
   }
 
+  if (params?.stock_status) {
+    query.set("stock_status", params.stock_status);
+  }
+
+  if (params?.min_price !== undefined) {
+    query.set("min_price", String(params.min_price));
+  }
+
+  if (params?.max_price !== undefined) {
+    query.set("max_price", String(params.max_price));
+  }
+
+  if (params?.sort) {
+    query.set("sort", params.sort);
+  }
+
   if (params?.page) {
     query.set("page", String(params.page));
   }
@@ -31,10 +51,7 @@ export const getProducts = async (params?: {
     query.set("limit", String(params.limit));
   }
 
-  const url =
-    `${API_URL}/products` + (query.toString() ? `?${query.toString()}` : "");
-
-  const response = await fetch(url);
+  const response = await fetch(`${API_URL}/products?${query.toString()}`);
 
   return response.json();
 };

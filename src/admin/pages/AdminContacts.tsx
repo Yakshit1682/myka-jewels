@@ -2,7 +2,7 @@ import { Eye, Mail, Search, X } from "lucide-react";
 
 import { useEffect, useMemo, useState } from "react";
 
-const API_URL = "http://localhost:5003/api/v1";
+const API_URL = import.meta.env.VITE_API_URL;
 
 type ContactSubmission = {
   uuid: string;

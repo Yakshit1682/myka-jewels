@@ -2,7 +2,7 @@ import { Navigate, Outlet } from "react-router-dom";
 
 import { useEffect, useState } from "react";
 
-const API_URL = "http://localhost:5003/api/v1";
+const API_URL = import.meta.env.VITE_API_URL;
 
 type AuthState = "loading" | "authorized" | "unauthorized";
 

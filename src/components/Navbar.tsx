@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { useState } from "react";
 
-const API_URL = "http://localhost:5003/api/v1";
+const API_URL = import.meta.env.VITE_API_URL;
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -91,6 +91,7 @@ const Navbar = () => {
             type="button"
             className="icon-button desktop-only-action"
             aria-label="Search"
+            onClick={() => navigate("/search")}
           >
             <Search size={18} />
           </button>

@@ -1,6 +1,5 @@
-// src/pages/ProductsPage.tsx
+import { ChevronDown, Search, SlidersHorizontal, X } from "lucide-react";
 
-import { ChevronDown, SlidersHorizontal } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import gsap from "gsap";
@@ -11,27 +10,58 @@ import ProductCard from "../components/ProductCard";
 import Footer from "../components/Footer";
 
 import { getProducts } from "../api/products.api";
+
 import { getCategories } from "../api/categories.api";
 
 import type { Product, Category } from "../types/product";
+import PageLoader from "../components/PageLoader";
+import NoProductsFound from "../components/NoProductsFound";
 
 const ProductsPage = () => {
   const pageRef = useRef<HTMLDivElement>(null);
 
   const [products, setProducts] = useState<Product[]>([]);
+
   const [categories, setCategories] = useState<Category[]>([]);
 
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+
+  const [featuredOnly, setFeaturedOnly] = useState(false);
+
+  const [stockStatus, setStockStatus] = useState("");
+
+  const [search, setSearch] = useState("");
+
+  const [minPrice, setMinPrice] = useState("");
+
+  const [maxPrice, setMaxPrice] = useState("");
+
+  const [sort, setSort] = useState("featured");
+
+  const [filterOpen, setFilterOpen] = useState(false);
 
   const [loading, setLoading] = useState(true);
 
-  const loadProducts = async (category?: string) => {
+  const loadProducts = async () => {
     try {
       setLoading(true);
 
       const response = await getProducts({
-        category: category || undefined,
-        limit: 50,
+        category: selectedCategory || undefined,
+
+        featured: featuredOnly ? true : undefined,
+
+        search: search.trim() || undefined,
+
+        stock_status: stockStatus || undefined,
+
+        min_price: minPrice ? Number(minPrice) : undefined,
+
+        max_price: maxPrice ? Number(maxPrice) : undefined,
+
+        sort,
+
+        limit: 20,
       });
 
       if (response.success) {
@@ -58,8 +88,28 @@ const ProductsPage = () => {
 
   useEffect(() => {
     loadCategories();
-    loadProducts();
   }, []);
+
+  /*
+   * Reload whenever filter changes
+   */
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      loadProducts();
+    }, 250);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [
+    selectedCategory,
+    featuredOnly,
+    stockStatus,
+    minPrice,
+    maxPrice,
+    sort,
+    search,
+  ]);
 
   useGSAP(
     () => {
@@ -85,7 +135,9 @@ const ProductsPage = () => {
   );
 
   useEffect(() => {
-    if (products.length === 0) return;
+    if (products.length === 0) {
+      return;
+    }
 
     const tween = gsap.fromTo(
       ".product-card",
@@ -107,11 +159,24 @@ const ProductsPage = () => {
     };
   }, [products]);
 
-  const handleCategory = async (slug: string) => {
-    setSelectedCategory(slug);
-
-    await loadProducts(slug);
+  const resetFilters = () => {
+    setSelectedCategory("");
+    setFeaturedOnly(false);
+    setStockStatus("");
+    setSearch("");
+    setMinPrice("");
+    setMaxPrice("");
+    setSort("featured");
   };
+
+  const activeFilterCount = [
+    selectedCategory,
+    featuredOnly,
+    stockStatus,
+    minPrice,
+    maxPrice,
+    search,
+  ].filter(Boolean).length;
 
   return (
     <>
@@ -133,7 +198,7 @@ const ProductsPage = () => {
           <div className="category-nav">
             <button
               className={selectedCategory === "" ? "active" : ""}
-              onClick={() => handleCategory("")}
+              onClick={() => setSelectedCategory("")}
             >
               All Jewellery
             </button>
@@ -142,7 +207,7 @@ const ProductsPage = () => {
               <button
                 key={category.uuid}
                 className={selectedCategory === category.slug ? "active" : ""}
-                onClick={() => handleCategory(category.slug)}
+                onClick={() => setSelectedCategory(category.slug)}
               >
                 {category.name}
               </button>
@@ -152,21 +217,117 @@ const ProductsPage = () => {
 
         <section className="products-section">
           <div className="products-toolbar">
-            <button className="filter-button">
+            <button
+              className={`filter-button ${filterOpen ? "active" : ""}`}
+              onClick={() => setFilterOpen(!filterOpen)}
+            >
               <SlidersHorizontal size={17} />
               Filter By
+              {activeFilterCount > 0 && (
+                <span className="filter-count">{activeFilterCount}</span>
+              )}
             </button>
 
             <span className="product-count">{products.length} Products</span>
 
-            <button className="sort-button">
-              Sort: Featured
-              <ChevronDown size={16} />
-            </button>
+            <div className="sort-wrapper">
+              <select
+                value={sort}
+                onChange={(event) => setSort(event.target.value)}
+                className="products-sort-select"
+              >
+                <option value="featured">Featured</option>
+
+                <option value="newest">Newest</option>
+
+                <option value="price_asc">Price: Low to High</option>
+
+                <option value="price_desc">Price: High to Low</option>
+              </select>
+
+              <ChevronDown size={15} />
+            </div>
           </div>
 
+          {filterOpen && (
+            <div className="products-filter-panel">
+              <div className="product-filter-search">
+                <Search size={16} />
+
+                <input
+                  value={search}
+                  onChange={(event) => setSearch(event.target.value)}
+                  placeholder="Search jewellery..."
+                />
+              </div>
+
+              <div className="product-filter-group">
+                <span>Featured</span>
+
+                <label className="featured-filter">
+                  <input
+                    type="checkbox"
+                    checked={featuredOnly}
+                    onChange={(event) => setFeaturedOnly(event.target.checked)}
+                  />
+                  Featured Only
+                </label>
+              </div>
+
+              <div className="product-filter-group">
+                <span>Availability</span>
+
+                <select
+                  value={stockStatus}
+                  onChange={(event) => setStockStatus(event.target.value)}
+                >
+                  <option value="">All</option>
+
+                  <option value="IN_STOCK">In Stock</option>
+
+                  <option value="ON_REQUEST">On Request</option>
+
+                  <option value="OUT_OF_STOCK">Out of Stock</option>
+                </select>
+              </div>
+
+              <div className="product-filter-group">
+                <span>Price Range</span>
+
+                <div className="price-filter-row">
+                  <input
+                    type="number"
+                    min="0"
+                    value={minPrice}
+                    onChange={(event) => setMinPrice(event.target.value)}
+                    placeholder="Min ₹"
+                  />
+
+                  <input
+                    type="number"
+                    min="0"
+                    value={maxPrice}
+                    onChange={(event) => setMaxPrice(event.target.value)}
+                    placeholder="Max ₹"
+                  />
+                </div>
+              </div>
+
+              {activeFilterCount > 0 && (
+                <button
+                  type="button"
+                  className="reset-product-filters"
+                  onClick={resetFilters}
+                >
+                  <X size={14} />
+                  Clear Filters
+                </button>
+              )}
+            </div>
+          )}
+
           {loading ? (
-            <div className="products-loading">Loading jewellery...</div>
+            <PageLoader text="Loading jewellery..." />
           ) : (
             <div className="product-grid">
               {products.map((product) => (
@@ -176,9 +337,7 @@ const ProductsPage = () => {
           )}
 
           {!loading && products.length === 0 && (
-            <div className="products-empty">
-              No jewellery found in this collection.
-            </div>
+            <NoProductsFound onClearFilters={resetFilters} />
           )}
         </section>
       </main>

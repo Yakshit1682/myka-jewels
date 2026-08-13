@@ -18,6 +18,8 @@ import ProductImageZoom from "../components/ProductImageZoom";
 
 import type { Product } from "../types/product";
 
+const API_URL = import.meta.env.VITE_API_URL;;
+
 const ProductDetailsPage = () => {
   const { slug } = useParams();
 
@@ -52,7 +54,7 @@ const ProductDetailsPage = () => {
       }
 
       try {
-        const response = await fetch("http://localhost:5003/api/v1/auth/me", {
+        const response = await fetch(`${API_URL}/auth/me`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -151,7 +153,7 @@ const ProductDetailsPage = () => {
       }
 
       try {
-        const response = await fetch("http://localhost:5003/api/v1/wishlist", {
+        const response = await fetch(`${API_URL}/wishlist`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -248,7 +250,7 @@ const ProductDetailsPage = () => {
        */
       if (isWishlisted) {
         const response = await fetch(
-          `http://localhost:5003/api/v1/wishlist/${product.uuid}`,
+          `${API_URL}/wishlist/${product.uuid}`,
           {
             method: "DELETE",
 
@@ -285,7 +287,7 @@ const ProductDetailsPage = () => {
       /*
        * ADD TO WISHLIST
        */
-      const response = await fetch("http://localhost:5003/api/v1/wishlist", {
+      const response = await fetch(`${API_URL}/wishlist`, {
         method: "POST",
 
         headers: {
@@ -347,7 +349,7 @@ const ProductDetailsPage = () => {
       setInquiryLoading(true);
 
       const response = await fetch(
-        `http://localhost:5003/api/v1/inquiries/products/${product.uuid}`,
+        `${API_URL}/inquiries/products/${product.uuid}`,
         {
           method: "POST",
 

@@ -22,41 +22,32 @@ import AdminLogin from "./admin/pages/AdminLogin";
 import AdminRoute from "./admin/AdminRoute";
 import NotFoundPage from "./pages/NotFoundPage";
 import BackToTop from "./components/BackToTop";
+import SearchPage from "./pages/SearchPage";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<HomePage />} />
-
         <Route path="/products" element={<ProductsPage />} />
         <Route path="/products/:slug" element={<ProductDetailsPage />} />
         <Route path="/about" element={<AboutPage />} />
-
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/login" element={<LoginPage />} />
-
         <Route path="/register" element={<RegisterPage />} />
-
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-
         <Route path="/reset-password" element={<ResetPasswordPage />} />
-
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/wishlist" element={<WishlistPage />} />
+        <Route path="/search" element={<SearchPage />} />
         <Route element={<AdminRoute />}>
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDashboard />} />
-
             <Route path="products" element={<AdminProducts />} />
-
             <Route path="categories" element={<AdminCategories />} />
-
             <Route path="inquiries" element={<AdminInquiries />} />
-
             <Route path="contacts" element={<AdminContacts />} />
-
             <Route path="users" element={<AdminUsers />} />
           </Route>
         </Route>
