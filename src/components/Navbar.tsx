@@ -162,7 +162,7 @@ const Navbar = () => {
                 Shop
               </Link>
 
-              <Link to="/products" onClick={closeMobileMenu}>
+              <Link to="/collections" onClick={closeMobileMenu}>
                 Collections
               </Link>
 
