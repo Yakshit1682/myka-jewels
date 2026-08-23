@@ -4,8 +4,8 @@ import { useState } from "react";
 
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+// import Navbar from "../components/Navbar";
+// import Footer from "../components/Footer";
 
 const API_URL = import.meta.env.VITE_API_URL;;
 
@@ -77,7 +77,7 @@ const ResetPasswordPage = () => {
 
   return (
     <>
-      <Navbar />
+      {/* <Navbar /> */}
 
       <main className="customer-auth-page">
         <section className="customer-auth-card">
@@ -124,7 +124,7 @@ const ResetPasswordPage = () => {
         </section>
       </main>
 
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 };

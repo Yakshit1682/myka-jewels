@@ -3,44 +3,83 @@ import { ChevronDown, Search, SlidersHorizontal, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import gsap from "gsap";
+
 import { useGSAP } from "@gsap/react";
 
-import Navbar from "../components/Navbar";
+import { useSearchParams } from "react-router-dom";
+
+// import Navbar from "../components/Navbar";
+
 import ProductCard from "../components/ProductCard";
-import Footer from "../components/Footer";
+
+// import Footer from "../components/Footer";
 
 import { getProducts } from "../api/products.api";
 
 import { getCategories } from "../api/categories.api";
 
 import type { Product, Category } from "../types/product";
+
 import PageLoader from "../components/PageLoader";
+
 import NoProductsFound from "../components/NoProductsFound";
 
 const ProductsPage = () => {
   const pageRef = useRef<HTMLDivElement>(null);
 
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [selectedCollection, setSelectedCollection] = useState(
+    searchParams.get("collection") || "",
+  );
+
+  /*
+  |--------------------------------------------------------------------------
+  | DATA
+  |--------------------------------------------------------------------------
+  */
+
   const [products, setProducts] = useState<Product[]>([]);
 
   const [categories, setCategories] = useState<Category[]>([]);
 
-  const [selectedCategory, setSelectedCategory] = useState("");
+  /*
+  |--------------------------------------------------------------------------
+  | FILTER STATE
+  |--------------------------------------------------------------------------
+  |
+  | Initial values come from URL.
+  |
+  */
 
-  const [featuredOnly, setFeaturedOnly] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(
+    searchParams.get("category") || "",
+  );
 
-  const [stockStatus, setStockStatus] = useState("");
+  const [featuredOnly, setFeaturedOnly] = useState(
+    searchParams.get("featured") === "true",
+  );
 
-  const [search, setSearch] = useState("");
+  const [stockStatus, setStockStatus] = useState(
+    searchParams.get("stock_status") || "",
+  );
 
-  const [minPrice, setMinPrice] = useState("");
+  const [search, setSearch] = useState(searchParams.get("search") || "");
 
-  const [maxPrice, setMaxPrice] = useState("");
+  const [minPrice, setMinPrice] = useState(searchParams.get("min_price") || "");
 
-  const [sort, setSort] = useState("featured");
+  const [maxPrice, setMaxPrice] = useState(searchParams.get("max_price") || "");
+
+  const [sort, setSort] = useState(searchParams.get("sort") || "featured");
 
   const [filterOpen, setFilterOpen] = useState(false);
 
   const [loading, setLoading] = useState(true);
+
+  /*
+  |--------------------------------------------------------------------------
+  | LOAD PRODUCTS
+  |--------------------------------------------------------------------------
+  */
 
   const loadProducts = async () => {
     try {
@@ -48,6 +87,8 @@ const ProductsPage = () => {
 
       const response = await getProducts({
         category: selectedCategory || undefined,
+
+        collection: selectedCollection || undefined,
 
         featured: featuredOnly ? true : undefined,
 
@@ -74,6 +115,12 @@ const ProductsPage = () => {
     }
   };
 
+  /*
+  |--------------------------------------------------------------------------
+  | LOAD CATEGORIES
+  |--------------------------------------------------------------------------
+  */
+
   const loadCategories = async () => {
     try {
       const response = await getCategories();
@@ -91,8 +138,71 @@ const ProductsPage = () => {
   }, []);
 
   /*
-   * Reload whenever filter changes
-   */
+  |--------------------------------------------------------------------------
+  | UPDATE URL QUERY STRING
+  |--------------------------------------------------------------------------
+  */
+
+  useEffect(() => {
+    const params = new URLSearchParams();
+
+    if (selectedCategory) {
+      params.set("category", selectedCategory);
+    }
+
+    if (selectedCollection) {
+      params.set("collection", selectedCollection);
+    }
+
+    if (featuredOnly) {
+      params.set("featured", "true");
+    }
+
+    if (stockStatus) {
+      params.set("stock_status", stockStatus);
+    }
+
+    if (search.trim()) {
+      params.set("search", search.trim());
+    }
+
+    if (minPrice) {
+      params.set("min_price", minPrice);
+    }
+
+    if (maxPrice) {
+      params.set("max_price", maxPrice);
+    }
+
+    /*
+     * Don't clutter URL with
+     * default sort value.
+     */
+    if (sort !== "featured") {
+      params.set("sort", sort);
+    }
+
+    setSearchParams(params, {
+      replace: true,
+    });
+  }, [
+    selectedCategory,
+    selectedCollection,
+    featuredOnly,
+    stockStatus,
+    search,
+    minPrice,
+    maxPrice,
+    sort,
+    setSearchParams,
+  ]);
+
+  /*
+  |--------------------------------------------------------------------------
+  | LOAD PRODUCTS WHEN FILTER CHANGES
+  |--------------------------------------------------------------------------
+  */
+
   useEffect(() => {
     const timeout = setTimeout(() => {
       loadProducts();
@@ -103,6 +213,7 @@ const ProductsPage = () => {
     };
   }, [
     selectedCategory,
+    selectedCollection,
     featuredOnly,
     stockStatus,
     minPrice,
@@ -111,21 +222,35 @@ const ProductsPage = () => {
     search,
   ]);
 
+  /*
+  |--------------------------------------------------------------------------
+  | PAGE ANIMATION
+  |--------------------------------------------------------------------------
+  */
+
   useGSAP(
     () => {
       gsap.from(".products-hero > *", {
         opacity: 0,
+
         y: 20,
+
         duration: 0.7,
+
         stagger: 0.1,
+
         ease: "power2.out",
       });
 
       gsap.from(".products-toolbar", {
         opacity: 0,
+
         y: 15,
+
         duration: 0.6,
+
         delay: 0.3,
+
         ease: "power2.out",
       });
     },
@@ -134,6 +259,12 @@ const ProductsPage = () => {
     },
   );
 
+  /*
+  |--------------------------------------------------------------------------
+  | PRODUCT ANIMATION
+  |--------------------------------------------------------------------------
+  */
+
   useEffect(() => {
     if (products.length === 0) {
       return;
@@ -141,15 +272,22 @@ const ProductsPage = () => {
 
     const tween = gsap.fromTo(
       ".product-card",
+
       {
         opacity: 0,
+
         y: 25,
       },
+
       {
         opacity: 1,
+
         y: 0,
+
         duration: 0.55,
+
         stagger: 0.06,
+
         ease: "power2.out",
       },
     );
@@ -159,30 +297,68 @@ const ProductsPage = () => {
     };
   }, [products]);
 
+  /*
+  |--------------------------------------------------------------------------
+  | RESET FILTERS
+  |--------------------------------------------------------------------------
+  */
+
   const resetFilters = () => {
     setSelectedCategory("");
+
+    setSelectedCollection("");
+
     setFeaturedOnly(false);
+
     setStockStatus("");
+
     setSearch("");
+
     setMinPrice("");
+
     setMaxPrice("");
+
     setSort("featured");
+
+    /*
+     * This immediately clears URL too.
+     */
+    setSearchParams({});
   };
+
+  /*
+  |--------------------------------------------------------------------------
+  | ACTIVE FILTER COUNT
+  |--------------------------------------------------------------------------
+  */
 
   const activeFilterCount = [
     selectedCategory,
+
     featuredOnly,
+
     stockStatus,
+
     minPrice,
+
     maxPrice,
+
     search,
   ].filter(Boolean).length;
 
+  /*
+  |--------------------------------------------------------------------------
+  | JSX
+  |--------------------------------------------------------------------------
+  */
+
   return (
     <>
-      <Navbar />
+      {/* <Navbar /> */}
 
       <main ref={pageRef}>
+        {/* HERO */}
+
         <section className="products-hero">
           <p className="breadcrumb">Home / Jewellery</p>
 
@@ -194,6 +370,8 @@ const ProductsPage = () => {
             Timeless pieces thoughtfully created to bring elegance to every
             moment.
           </p>
+
+          {/* CATEGORY NAV */}
 
           <div className="category-nav">
             <button
@@ -215,7 +393,11 @@ const ProductsPage = () => {
           </div>
         </section>
 
+        {/* PRODUCTS */}
+
         <section className="products-section">
+          {/* TOOLBAR */}
+
           <div className="products-toolbar">
             <button
               className={`filter-button ${filterOpen ? "active" : ""}`}
@@ -249,8 +431,12 @@ const ProductsPage = () => {
             </div>
           </div>
 
+          {/* FILTER PANEL */}
+
           {filterOpen && (
             <div className="products-filter-panel">
+              {/* SEARCH */}
+
               <div className="product-filter-search">
                 <Search size={16} />
 
@@ -260,6 +446,8 @@ const ProductsPage = () => {
                   placeholder="Search jewellery..."
                 />
               </div>
+
+              {/* FEATURED */}
 
               <div className="product-filter-group">
                 <span>Featured</span>
@@ -273,6 +461,8 @@ const ProductsPage = () => {
                   Featured Only
                 </label>
               </div>
+
+              {/* AVAILABILITY */}
 
               <div className="product-filter-group">
                 <span>Availability</span>
@@ -290,6 +480,8 @@ const ProductsPage = () => {
                   <option value="OUT_OF_STOCK">Out of Stock</option>
                 </select>
               </div>
+
+              {/* PRICE */}
 
               <div className="product-filter-group">
                 <span>Price Range</span>
@@ -313,6 +505,8 @@ const ProductsPage = () => {
                 </div>
               </div>
 
+              {/* RESET */}
+
               {activeFilterCount > 0 && (
                 <button
                   type="button"
@@ -325,6 +519,8 @@ const ProductsPage = () => {
               )}
             </div>
           )}
+
+          {/* PRODUCTS */}
 
           {loading ? (
             <PageLoader text="Loading jewellery..." />
@@ -342,7 +538,7 @@ const ProductsPage = () => {
         </section>
       </main>
 
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 };

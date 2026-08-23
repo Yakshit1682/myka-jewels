@@ -68,7 +68,7 @@ const Navbar = () => {
           <nav className="desktop-nav">
             <Link to="/products">Shop</Link>
 
-            <Link to="/products">Collections</Link>
+            <Link to="/collections">Collections</Link>
           </nav>
         </div>
 

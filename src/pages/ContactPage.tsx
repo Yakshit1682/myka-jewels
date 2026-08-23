@@ -2,8 +2,8 @@ import { Clock3, Mail, MapPin, Phone, Send } from "lucide-react";
 
 import { useState } from "react";
 
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+// import Navbar from "../components/Navbar";
+// import Footer from "../components/Footer";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -64,8 +64,8 @@ const ContactPage = () => {
 
   return (
     <>
-      <Navbar />
-
+      {/* <Navbar /> */}
+    
       <main>
         <section className="contact-hero">
           <p className="home-eyebrow">CONTACT MYKA</p>
@@ -297,7 +297,7 @@ const ContactPage = () => {
         </section>
       </main>
 
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 };

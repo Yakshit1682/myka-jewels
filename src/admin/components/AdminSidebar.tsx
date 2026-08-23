@@ -65,6 +65,16 @@ const AdminSidebar = () => {
           Categories
         </NavLink>
 
+        <NavLink to="/admin/collections">
+          <Boxes size={18} />
+          Collections
+        </NavLink>
+
+        <NavLink to="/admin/banners">
+          <Boxes size={18} />
+          Banners
+        </NavLink>
+
         <NavLink to="/admin/inquiries">
           <MessageCircleMore size={18} />
           Inquiries

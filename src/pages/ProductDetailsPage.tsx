@@ -7,14 +7,14 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 
-import Navbar from "../components/Navbar";
+// import Navbar from "../components/Navbar";
 import ProductCard from "../components/ProductCard";
-import Footer from "../components/Footer";
+// import Footer from "../components/Footer";
 
 import { getProductBySlug, getProducts } from "../api/products.api";
 
 // import ImageMagnifier from "../components/ImageMagnifier";
-import ProductImageZoom from "../components/ProductImageZoom";
+// import ProductImageZoom from "../components/ProductImageZoom";
 
 import type { Product } from "../types/product";
 
@@ -407,7 +407,7 @@ const ProductDetailsPage = () => {
   if (loading) {
     return (
       <>
-        <Navbar />
+        {/* <Navbar /> */}
 
         <main className="product-details-loading">
           <div>
@@ -416,7 +416,7 @@ const ProductDetailsPage = () => {
           </div>
         </main>
 
-        <Footer />
+        {/* <Footer /> */}
       </>
     );
   }
@@ -428,7 +428,7 @@ const ProductDetailsPage = () => {
   if (!product) {
     return (
       <>
-        <Navbar />
+        {/* <Navbar /> */}
 
         <main className="not-found-page">
           <h1>Product not found</h1>
@@ -438,7 +438,7 @@ const ProductDetailsPage = () => {
           </Link>
         </main>
 
-        <Footer />
+        {/* <Footer /> */}
       </>
     );
   }
@@ -449,7 +449,7 @@ const ProductDetailsPage = () => {
 
   return (
     <>
-      <Navbar />
+      {/* <Navbar /> */}
 
       <main ref={pageRef}>
         <section className="product-details-section">
@@ -781,7 +781,7 @@ const ProductDetailsPage = () => {
         )}
       </main>
 
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 };

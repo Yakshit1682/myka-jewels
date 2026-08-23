@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 
 import { Link, useNavigate } from "react-router-dom";
 
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+// import Navbar from "../components/Navbar";
+// import Footer from "../components/Footer";
 
 const API_URL = import.meta.env.VITE_API_URL;;
 
@@ -126,18 +126,18 @@ const ProfilePage = () => {
   if (loading) {
     return (
       <>
-        <Navbar />
+        {/* <Navbar /> */}
 
         <main className="profile-loading">Loading your account...</main>
 
-        <Footer />
+        {/* <Footer /> */}
       </>
     );
   }
 
   return (
     <>
-      <Navbar />
+      {/* <Navbar /> */}
 
       <main className="profile-page">
         <section className="profile-header">
@@ -262,7 +262,7 @@ const ProfilePage = () => {
         </section>
       </main>
 
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 };

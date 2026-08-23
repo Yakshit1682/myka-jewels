@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 
 import { Link, useNavigate } from "react-router-dom";
 
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+// import Navbar from "../components/Navbar";
+// import Footer from "../components/Footer";
 
 import type { Product } from "../types/product";
 
@@ -97,7 +97,7 @@ const WishlistPage = () => {
 
   return (
     <>
-      <Navbar />
+      {/* <Navbar /> */}
 
       <main className="wishlist-page" style={{ minHeight: "calc(100vh - 200px)" }}>
         <section className="wishlist-header">
@@ -189,7 +189,7 @@ const WishlistPage = () => {
         )}
       </main>
 
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 };

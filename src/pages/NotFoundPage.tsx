@@ -2,13 +2,13 @@ import { ArrowLeft, Gem } from "lucide-react";
 
 import { Link } from "react-router-dom";
 
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+// import Navbar from "../components/Navbar";
+// import Footer from "../components/Footer";
 
 const NotFoundPage = () => {
   return (
     <>
-      <Navbar />
+      {/* <Navbar /> */}
 
       <main className="not-found-page">
         <div className="not-found-content">
@@ -44,7 +44,7 @@ const NotFoundPage = () => {
         <span className="not-found-decoration right">✦</span>
       </main>
 
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 };

@@ -4,8 +4,8 @@ import { useState } from "react";
 
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+// import Navbar from "../components/Navbar";
+// import Footer from "../components/Footer";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -71,7 +71,7 @@ const LoginPage = () => {
 
   return (
     <>
-      <Navbar />
+      {/* <Navbar /> */}
 
       <main className="customer-auth-page">
         <section className="customer-auth-card">
@@ -144,7 +144,7 @@ const LoginPage = () => {
         </section>
       </main>
 
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 };

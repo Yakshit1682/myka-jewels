@@ -1,7 +1,7 @@
 import { ArrowRight, Gem, Heart, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+// import Navbar from "../components/Navbar";
+// import Footer from "../components/Footer";
 import { useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
@@ -124,7 +124,7 @@ const AboutPage = () => {
 
   return (
     <>
-      <Navbar />
+      {/* <Navbar /> */}
 
       <main ref={pageRef}>
         <section className="about-hero">
@@ -284,7 +284,7 @@ const AboutPage = () => {
           </Link>
         </section>
       </main>
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 };

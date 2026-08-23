@@ -23,24 +23,33 @@ import AdminRoute from "./admin/AdminRoute";
 import NotFoundPage from "./pages/NotFoundPage";
 import BackToTop from "./components/BackToTop";
 import SearchPage from "./pages/SearchPage";
+import AdminCollections from "./admin/pages/AdminCollections";
+import Collections from "./pages/Collections";
+import AdminHomeBanners from "./admin/pages/AdminHomeBanners";
+// import GlobalBanner from "./components/GlobalBanner";
+import PublicLayout from "./components/PublicLayout";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/products" element={<ProductsPage />} />
-        <Route path="/products/:slug" element={<ProductDetailsPage />} />
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/contact" element={<ContactPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="/reset-password" element={<ResetPasswordPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/wishlist" element={<WishlistPage />} />
-        <Route path="/search" element={<SearchPage />} />
+        <Route element={<PublicLayout />}>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/products" element={<ProductsPage />} />
+          <Route path="/products/:slug" element={<ProductDetailsPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/wishlist" element={<WishlistPage />} />
+          <Route path="/search" element={<SearchPage />} />
+          <Route path="/collections" element={<Collections />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Route>
         <Route element={<AdminRoute />}>
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDashboard />} />
@@ -48,12 +57,14 @@ function App() {
             <Route path="categories" element={<AdminCategories />} />
             <Route path="inquiries" element={<AdminInquiries />} />
             <Route path="contacts" element={<AdminContacts />} />
+            <Route path="collections" element={<AdminCollections />} />
+            <Route path="banners" element={<AdminHomeBanners />} />
             <Route path="users" element={<AdminUsers />} />
           </Route>
         </Route>
-        <Route path="*" element={<NotFoundPage />} />
       </Routes>
       <BackToTop />
+      {/* <GlobalBanner /> */}
     </BrowserRouter>
   );
 }

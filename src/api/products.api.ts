@@ -4,6 +4,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 export const getProducts = async (params?: {
   category?: string;
+  collection?: string;
   featured?: boolean;
   search?: string;
   stock_status?: string;
@@ -17,6 +18,10 @@ export const getProducts = async (params?: {
 
   if (params?.category) {
     query.set("category", params.category);
+  }
+
+  if (params?.collection) {
+    query.set("collection", params.collection);
   }
 
   if (params?.featured !== undefined) {

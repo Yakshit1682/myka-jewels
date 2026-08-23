@@ -1,4 +1,12 @@
-import { ArrowRight, Gem, ShieldCheck, Sparkles, Truck } from "lucide-react";
+import {
+  ArrowRight,
+  Gem,
+  ShieldCheck,
+  Sparkles,
+  Truck,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 
@@ -6,19 +14,57 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 
-import Navbar from "../components/Navbar";
+// import Navbar from "../components/Navbar";
 import ProductCard from "../components/ProductCard";
-import Footer from "../components/Footer";
+// import Footer from "../components/Footer";
 import { getSignatureProducts } from "../api/products.api";
 
 import type { Product } from "../types/product";
 
+import { getHomeBanners } from "../api/homeBanners.api";
+
 gsap.registerPlugin(ScrollTrigger);
+
+type HomeBannerImage = {
+  uuid: string;
+
+  image_data_uri: string;
+
+  alt_text?: string | null;
+
+  sort_order: number;
+
+  link_url?: string | null;
+};
+
+type HomeBanner = {
+  uuid: string;
+
+  title?: string | null;
+
+  subtitle?: string | null;
+
+  description?: string | null;
+
+  type: "BANNER" | "CAROUSEL";
+
+  button_text?: string | null;
+
+  button_url?: string | null;
+
+  sort_order: number;
+
+  images: HomeBannerImage[];
+};
 
 const HomePage = () => {
   const [signatureProducts, setSignatureProducts] = useState<Product[]>([]);
 
   const [signatureLoading, setSignatureLoading] = useState(true);
+
+  const [homeBanners, setHomeBanners] = useState<HomeBanner[]>([]);
+
+  const [activeSlide, setActiveSlide] = useState(0);
 
   const pageRef = useRef<HTMLDivElement>(null);
 
@@ -41,6 +87,60 @@ const HomePage = () => {
 
     loadSignatureProducts();
   }, []);
+
+  useEffect(() => {
+    const loadHomeBanners = async () => {
+      try {
+        const response = await getHomeBanners();
+
+        if (response.success) {
+          setHomeBanners(response.data || []);
+        }
+      } catch (error) {
+        console.error("Home banners error:", error);
+      }
+    };
+
+    loadHomeBanners();
+  }, []);
+
+  const carousel = homeBanners.find((banner) => banner.type === "CAROUSEL");
+
+  const carouselImages = carousel?.images || [];
+
+
+  useEffect(() => {
+    if (carouselImages.length <= 1) {
+      return;
+    }
+
+    const interval = window.setInterval(() => {
+      setActiveSlide((current) => (current + 1) % carouselImages.length);
+    }, 5000);
+
+    return () => {
+      window.clearInterval(interval);
+    };
+  }, [carouselImages.length]);
+
+  const nextSlide = () => {
+    if (!carouselImages.length) {
+      return;
+    }
+
+    setActiveSlide((current) => (current + 1) % carouselImages.length);
+  };
+
+  const previousSlide = () => {
+    if (!carouselImages.length) {
+      return;
+    }
+
+    setActiveSlide(
+      (current) =>
+        (current - 1 + carouselImages.length) % carouselImages.length,
+    );
+  };
 
   useGSAP(
     () => {
@@ -328,7 +428,7 @@ const HomePage = () => {
 
   return (
     <>
-      <Navbar />
+      {/* <Navbar /> */}
 
       <main ref={pageRef}>
         {/* HERO */}
@@ -381,6 +481,97 @@ const HomePage = () => {
           </div>
         </section>
 
+        {/* DYNAMIC HOME CAROUSEL */}
+
+        {carousel && carouselImages.length > 0 && (
+          <section className="home-promo-carousel">
+            <div className="home-carousel-track">
+              {carouselImages.map((image, index) => (
+                <div
+                  key={image.uuid}
+                  className={`home-carousel-slide ${
+                    index === activeSlide ? "active" : ""
+                  }`}
+                >
+                  <img
+                    src={image.image_data_uri}
+                    alt={image.alt_text || carousel.title || "MYKA jewellery"}
+                  />
+
+                  <div className="home-carousel-overlay" />
+
+                  <div className="home-carousel-content">
+                    {carousel.subtitle && (
+                      <p className="home-carousel-eyebrow">
+                        {carousel.subtitle}
+                      </p>
+                    )}
+
+                    {carousel.title && <h2>{carousel.title}</h2>}
+
+                    {carousel.description && (
+                      <p className="home-carousel-description">
+                        {carousel.description}
+                      </p>
+                    )}
+
+                    {(image.link_url || carousel.button_url) && (
+                      <Link
+                        to={
+                          image.link_url || carousel.button_url || "/products"
+                        }
+                        className="home-carousel-button"
+                      >
+                        {carousel.button_text || "Discover"}
+
+                        <ArrowRight size={15} />
+                      </Link>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* ARROWS */}
+
+            {carouselImages.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  className="home-carousel-arrow home-carousel-arrow-left"
+                  onClick={previousSlide}
+                  aria-label="Previous slide"
+                >
+                  <ChevronLeft size={22} />
+                </button>
+
+                <button
+                  type="button"
+                  className="home-carousel-arrow home-carousel-arrow-right"
+                  onClick={nextSlide}
+                  aria-label="Next slide"
+                >
+                  <ChevronRight size={22} />
+                </button>
+
+                {/* DOTS */}
+
+                <div className="home-carousel-dots">
+                  {carouselImages.map((image, index) => (
+                    <button
+                      key={image.uuid}
+                      type="button"
+                      className={index === activeSlide ? "active" : ""}
+                      onClick={() => setActiveSlide(index)}
+                      aria-label={`Go to slide ${index + 1}`}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+          </section>
+        )}
+
         {/* BRAND INTRO */}
 
         <section className="brand-intro-section">
@@ -393,9 +584,8 @@ const HomePage = () => {
           </h2>
 
           <p>
-            Thoughtfully designed pieces combining timeless craftsmanship with
-            effortless modern elegance. Created to be worn, loved and treasured
-            for years.
+            Jewellery that celebrates your moments,&nbsp; <br /> your memories
+            and everything that makes you.
           </p>
         </section>
 
@@ -612,7 +802,7 @@ const HomePage = () => {
         </section>
       </main>
 
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 };

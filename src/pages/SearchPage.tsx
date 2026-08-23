@@ -2,8 +2,8 @@ import { Search, X } from "lucide-react";
 
 import { useEffect, useRef, useState } from "react";
 
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+// import Navbar from "../components/Navbar";
+// import Footer from "../components/Footer";
 import ProductCard from "../components/ProductCard";
 import PageLoader from "../components/PageLoader";
 import NoProductsFound from "../components/NoProductsFound";
@@ -83,7 +83,7 @@ const SearchPage = () => {
 
   return (
     <>
-      <Navbar />
+      {/* <Navbar /> */}
 
       <main className="search-page">
         <section className="search-page-header">
@@ -161,7 +161,7 @@ const SearchPage = () => {
         </section>
       </main>
 
-      <Footer />
+      {/* <Footer />   */}
     </>
   );
 };

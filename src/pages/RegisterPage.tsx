@@ -4,8 +4,8 @@ import { useState } from "react";
 
 import { Link, useNavigate } from "react-router-dom";
 
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+// import Navbar from "../components/Navbar";
+// import Footer from "../components/Footer";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -78,7 +78,7 @@ const RegisterPage = () => {
 
   return (
     <>
-      <Navbar />
+      {/* <Navbar /> */}
 
       <main className="customer-auth-page">
         <section className="customer-auth-card customer-register-card">
@@ -187,7 +187,7 @@ const RegisterPage = () => {
         </section>
       </main>
 
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 };
