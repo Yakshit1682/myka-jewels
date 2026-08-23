@@ -4,6 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { useState } from "react";
 
+import myka_logo from "../assets/myka_logo.png"
+
 const API_URL = import.meta.env.VITE_API_URL;
 
 const Navbar = () => {
@@ -73,11 +75,17 @@ const Navbar = () => {
         </div>
 
         <Link to="/" className="logo">
-          <span className="logo-symbol">MK</span>
+          {/* <span className="logo-symbol">MK</span>
 
           <span className="logo-name">MYKA</span>
 
-          <small>JEWELS</small>
+          <small>JEWELS</small> */}
+
+          <img
+            src={myka_logo}
+            alt="Myka Jewels"
+            className="logo-image"
+          />
         </Link>
 
         <div className="navbar-right">

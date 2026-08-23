@@ -4,6 +4,8 @@ import { FaFacebookF, FaInstagram } from "react-icons/fa";
 
 import { Link } from "react-router-dom";
 
+import myka_logo from "../assets/myka_logo.png";
+
 const Footer = () => {
   const token = localStorage.getItem("token");
 
@@ -13,9 +15,21 @@ const Footer = () => {
         {/* BRAND */}
 
         <div className="footer-brand">
-          <Link to="/" className="footer-logo">
+          {/* <Link to="/" className="footer-logo">
             <div className="footer-logo-circle">MK</div>
 
+            <div className="footer-logo-text">
+              <h3>MYKA</h3>
+              <span>JEWELS</span>
+            </div>
+          </Link> */}
+
+          <Link to="/" className="footer-logo">
+            <img
+              src={myka_logo}
+              alt="Myka Jewels"
+              className="footer-logo-image"
+            />
             <div className="footer-logo-text">
               <h3>MYKA</h3>
               <span>JEWELS</span>
@@ -25,11 +39,23 @@ const Footer = () => {
           <p>Timeless jewellery created for life's most beautiful moments.</p>
 
           <div className="footer-socials">
-            <a href="#" aria-label="Instagram" className="footer-social-button">
+            <a
+              href="https://www.instagram.com/mykajewels"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram"
+              className="footer-social-button"
+            >
               <FaInstagram size={16} />
             </a>
 
-            <a href="#" aria-label="Facebook" className="footer-social-button">
+            <a
+              href="https://www.facebook.com/mykajewels/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Facebook"
+              className="footer-social-button"
+            >
               <FaFacebookF size={16} />
             </a>
           </div>
@@ -42,13 +68,13 @@ const Footer = () => {
 
           <Link to="/products">All Jewellery</Link>
 
-          <Link to="/products?category=Rings">Rings</Link>
+          <Link to="/products?category=rings">Rings</Link>
 
-          <Link to="/products?category=Necklaces">Necklaces</Link>
+          <Link to="/products?category=necklaces">Necklaces</Link>
 
-          <Link to="/products?category=Earrings">Earrings</Link>
+          <Link to="/products?category=earrings">Earrings</Link>
 
-          <Link to="/products?category=Bracelets">Bracelets</Link>
+          <Link to="/products?category=bracelets">Bracelets</Link>
         </div>
 
         {/* MYKA */}

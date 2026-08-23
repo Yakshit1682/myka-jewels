@@ -1,5 +1,7 @@
 const API_URL = import.meta.env.VITE_API_URL;
 
+const getToken = () => localStorage.getItem("token");
+
 export type CollectionPayload = {
   name: string;
   description?: string | null;
@@ -12,6 +14,10 @@ export const getCollections = async () => {
   const response = await fetch(`${API_URL}/admin/collections`, {
     method: "GET",
     credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getToken()}`,
+    },
   });
 
   return response.json();
@@ -21,6 +27,10 @@ export const getCollectionByUuid = async (uuid: string) => {
   const response = await fetch(`${API_URL}/admin/collections/${uuid}`, {
     method: "GET",
     credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getToken()}`,
+    },
   });
 
   return response.json();
@@ -32,6 +42,7 @@ export const createCollection = async (payload: CollectionPayload) => {
 
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${getToken()}`,
     },
 
     credentials: "include",
@@ -51,6 +62,7 @@ export const updateCollection = async (
 
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${getToken()}`,
     },
 
     credentials: "include",
@@ -64,7 +76,10 @@ export const updateCollection = async (
 export const deleteCollection = async (uuid: string) => {
   const response = await fetch(`${API_URL}/admin/collections/${uuid}`, {
     method: "DELETE",
-
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getToken()}`,
+    },
     credentials: "include",
   });
 

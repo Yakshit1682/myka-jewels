@@ -8,7 +8,8 @@ import {
   MessageCircleMore,
 } from "lucide-react";
 
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, Link } from "react-router-dom";
+import myka_logo from "../../assets/myka_logo.png";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -41,12 +42,15 @@ const AdminSidebar = () => {
   return (
     <aside className="admin-sidebar">
       <div className="admin-brand">
-        <div className="admin-brand-logo">MK</div>
+        <Link to="/admin" className="admin-logo">
+          {/* <span className="logo-symbol">MK</span>
 
-        <div>
-          <strong>MYKA</strong>
-          <span>ADMIN</span>
-        </div>
+          <span className="logo-name">MYKA</span>
+
+          <small>JEWELS</small> */}
+
+          <img src={myka_logo} alt="Myka Jewels" className="footer-logo-image" />
+        </Link>
       </div>
 
       <nav className="admin-nav">

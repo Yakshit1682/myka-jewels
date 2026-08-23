@@ -1,6 +1,7 @@
 import { Lock, Mail } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import myka_logo from "../../assets/myka_logo.png";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -67,9 +68,11 @@ const AdminLogin = () => {
     <main className="admin-login-page">
       <section className="admin-login-card">
         <div className="admin-login-brand">
-          <div>MK</div>
-
-          <h1>MYKA</h1>
+          <img
+            src={myka_logo}
+            alt="Myka Jewels"
+            className="footer-logo-image"
+          />
 
           <span>ADMIN PORTAL</span>
         </div>
