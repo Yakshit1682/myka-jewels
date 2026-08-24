@@ -392,7 +392,7 @@ a {
 
 @media (max-width: 700px) {
   .navbar {
-    height: 75px;
+    height: 100px;
     padding: 0 18px;
   }
 
@@ -5948,7 +5948,7 @@ a {
 
 @media (max-width: 900px) {
   .navbar {
-    min-height: 68px;
+    min-height: 100px;
 
     padding: 0 14px;
 
