@@ -30,10 +30,6 @@ const Footer = () => {
               alt="Myka Jewels"
               className="footer-logo-image"
             />
-            <div className="footer-logo-text">
-              <h3>MYKA</h3>
-              <span>JEWELS</span>
-            </div>
           </Link>
 
           <p>Timeless jewellery created for life's most beautiful moments.</p>
@@ -59,6 +55,9 @@ const Footer = () => {
               <FaFacebookF size={16} />
             </a>
           </div>
+        </div>
+        <div className="footer-golden-line">
+          <span>✦</span>
         </div>
 
         {/* SHOP */}

@@ -48,7 +48,7 @@ a {
 /* NAVBAR */
 
 .navbar {
-  height: 92px;
+  height: 180px;
   padding: 0 5%;
 
   display: grid;
@@ -111,7 +111,7 @@ a {
 
 .logo-image {
   display: block;
-  width: 100px;
+  width: 190px;
   height: auto;
   object-fit: contain;
 }
@@ -392,7 +392,7 @@ a {
 
 @media (max-width: 700px) {
   .navbar {
-    height: 100px;
+    height: 180px;
     padding: 0 18px;
   }
 
@@ -468,9 +468,9 @@ a {
 }
 
 @media (max-width: 420px) {
-  .navbar-right .icon-button:nth-last-child(2) {
+  /* .navbar-right .icon-button:nth-last-child(2) {
     display: none;
-  }
+  } */
 
   .product-image-wrapper {
     height: 210px;
@@ -1667,6 +1667,10 @@ a {
 
 .footer-brand {
   max-width: 280px;
+    display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
 }
 
 .footer-logo-circle {
@@ -1959,6 +1963,10 @@ a {
 
   .footer-brand {
     grid-column: auto;
+    display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
   }
 
   .footer-bottom {
@@ -2664,11 +2672,12 @@ a {
   display: inline-flex;
   align-items: center;
   text-decoration: none;
+
 }
 
 .footer-logo-image {
   display: block;
-  width: 100px;
+  width: 180px;
   height: auto;
   object-fit: contain;
 }
@@ -2731,7 +2740,8 @@ a {
 
 .footer-socials {
   display: flex;
-  gap: 10px;
+  justify-content: center;
+  gap: 12px;
 }
 
 .footer-social-button {
@@ -5863,7 +5873,7 @@ a {
 
 .navbar {
   width: 100%;
-  min-height: 82px;
+  min-height: 180px;
 
   padding: 0 4%;
 
@@ -5948,7 +5958,7 @@ a {
 
 @media (max-width: 900px) {
   .navbar {
-    min-height: 100px;
+    min-height: 180px;
 
     padding: 0 14px;
 
@@ -5963,9 +5973,9 @@ a {
     display: flex;
   }
 
-  .desktop-only-action {
+  /* .desktop-only-action {
     display: none;
-  }
+  } */
 
   .navbar-left {
     justify-content: flex-start;
@@ -8937,4 +8947,35 @@ a {
   width: 220px;
   height: 160px;
   object-fit: contain;
+}
+
+.footer-golden-line {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .footer-golden-line {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin: 40px 0 30px;
+    color: #c89645;
+  }
+
+  .footer-golden-line::before,
+  .footer-golden-line::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right,
+        transparent,
+        #c89645,
+        transparent);
+  }
+
+  .footer-golden-line span {
+    padding: 0 14px;
+    color: #d4a451;
+    font-size: 16px;
+  }
 }
