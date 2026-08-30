@@ -42,6 +42,8 @@ const ProductsPage = () => {
 
   const [categories, setCategories] = useState<Category[]>([]);
 
+  
+
   /*
   |--------------------------------------------------------------------------
   | FILTER STATE
@@ -352,6 +354,26 @@ const ProductsPage = () => {
   |--------------------------------------------------------------------------
   */
 
+  const selectedSlug = searchParams.get("category") || "";
+
+  const selectedParent:any = categories.find(
+    (category) =>
+      category.slug === selectedSlug ||
+      category.children?.some((child: any) => child.slug === selectedSlug),
+  );
+
+  const selectedChild = selectedParent?.children?.find(
+    (child: any) => child.slug === selectedSlug,
+  );
+
+  // const selectCategory = (slug: string) => {
+  //   if (slug) {
+  //     setSelectedCategory;(slug);
+  //   } else {
+  //     setSelectedCategory("");
+  //   }
+  // };
+
   return (
     <>
       {/* <Navbar /> */}
@@ -384,13 +406,29 @@ const ProductsPage = () => {
             {categories.map((category) => (
               <button
                 key={category.uuid}
-                className={selectedCategory === category.slug ? "active" : ""}
+                className={
+                  selectedParent?.uuid === category.uuid ? "active" : ""
+                }
                 onClick={() => setSelectedCategory(category.slug)}
               >
                 {category.name}
               </button>
             ))}
           </div>
+          <hr/>
+          {selectedParent?.children?.length > 0 && (
+            <div className="category-nav subcategory-nav">
+              {selectedParent.children.map((child: any) => (
+                <button
+                  key={child.uuid}
+                  className={selectedChild?.uuid === child.uuid ? "active" : ""}
+                  onClick={() => setSelectedCategory(child.slug)}
+                >
+                  {child.name}
+                </button>
+              ))}
+            </div>
+          )}
         </section>
 
         {/* PRODUCTS */}

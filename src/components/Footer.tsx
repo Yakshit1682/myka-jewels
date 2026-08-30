@@ -1,4 +1,4 @@
-import { Heart, UserRound } from "lucide-react";
+// import { Heart, UserRound } from "lucide-react";
 
 import { FaFacebookF, FaInstagram } from "react-icons/fa";
 
@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 import myka_logo from "../assets/myka_logo.png";
 
 const Footer = () => {
-  const token = localStorage.getItem("token");
+  // const token = localStorage.getItem("token");
 
   return (
     <footer className="luxury-footer">
@@ -92,7 +92,7 @@ const Footer = () => {
 
         {/* ACCOUNT */}
 
-        <div className="footer-links-column">
+        {/* <div className="footer-links-column">
           <h4>My Account</h4>
 
           {token ? (
@@ -114,7 +114,7 @@ const Footer = () => {
               <Link to="/register">Create Account</Link>
             </>
           )}
-        </div>
+        </div> */}
       </div>
 
       <div className="footer-divider" />
