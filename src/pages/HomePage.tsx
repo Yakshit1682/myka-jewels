@@ -395,13 +395,15 @@ const HomePage = () => {
         scrollTrigger: {
           trigger: ".home-benefits",
           start: "top 82%",
+          once: true,
         },
 
         y: 45,
         opacity: 0,
         duration: 0.8,
-        stagger: 0.12,
+        stagger: 0,
         ease: "power3.out",
+        clearProps: "transform",
       });
 
       /*
