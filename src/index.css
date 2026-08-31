@@ -198,7 +198,7 @@ a {
   overflow-x: auto;
 }
 
-.category-nav button {
+/* .category-nav button {
   padding: 17px 0;
 
   border: 0;
@@ -216,6 +216,40 @@ a {
 .category-nav button.active {
   border-color: var(--gold);
   color: var(--gold);
+} */
+
+.category-nav button {
+  position: relative;
+  padding: 17px 0;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+
+  color: inherit;
+  font-family: inherit;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  white-space: nowrap;
+
+  appearance: none;
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent;
+
+  transition: color 0.25s ease, transform 0.25s ease;
+  cursor: pointer;
+}
+
+.category-nav button:focus,
+.category-nav button:active {
+  color: inherit;
+  outline: none;
+}
+
+.category-nav button.active {
+  color: #b08d57;
+  /* your active golden colour */
+  border-bottom-color: #b08d57;
 }
 
 /* PRODUCTS */
@@ -248,6 +282,7 @@ a {
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 1px;
+  
 }
 
 .sort-button {
@@ -1523,7 +1558,7 @@ a {
   padding: 80px 5%;
 
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
 
   border-bottom: 1px solid var(--border);
 }
@@ -3265,6 +3300,9 @@ a {
   transition:
     color 0.25s ease,
     transform 0.25s ease;
+    color: inherit;
+    -webkit-appearance: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .filter-button:hover,

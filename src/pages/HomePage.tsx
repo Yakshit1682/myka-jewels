@@ -580,7 +580,7 @@ const HomePage = () => {
           <h2>
             Jewellery made to become
             <br />
-            part of your story.
+            &nbsp;part of your story.
           </h2>
 
           <p>
@@ -712,7 +712,7 @@ const HomePage = () => {
             <h2>
               Made for moments
               <br />
-              worth remembering.
+              &nbsp;worth remembering.
             </h2>
 
             <p>
@@ -731,7 +731,7 @@ const HomePage = () => {
         {/* BENEFITS */}
 
         <section className="home-benefits">
-          <div className="benefit-item">
+          {/* <div className="benefit-item">
             <Gem size={25} strokeWidth={1.3} />
 
             <h3>Fine Craftsmanship</h3>
@@ -739,7 +739,7 @@ const HomePage = () => {
             <p>
               Thoughtfully crafted jewellery with attention to every detail.
             </p>
-          </div>
+          </div> */}
 
           <div className="benefit-item">
             <Sparkles size={25} strokeWidth={1.3} />
