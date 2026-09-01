@@ -1,4 +1,4 @@
-import { Gem, RotateCcw, Search } from "lucide-react";
+import { RotateCcw, Search } from "lucide-react";
 
 interface NoProductsFoundProps {
   onClearFilters?: () => void;
@@ -11,7 +11,9 @@ const NoProductsFound = ({ onClearFilters }: NoProductsFoundProps) => {
         <span />
 
         <div className="no-products-icon">
-          <Gem size={30} strokeWidth={1.1} />
+          <span aria-hidden="true" style={{ fontSize: "28px" }}>
+            &#10024;
+          </span>
         </div>
 
         <span />

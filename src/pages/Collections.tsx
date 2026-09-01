@@ -1,6 +1,7 @@
 import { ArrowUpRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import PageLoader from "../components/PageLoader";
 // import Navbar from "../components/Navbar";
 // import Footer from "../components/Footer";
 
@@ -72,7 +73,7 @@ const Collections = () => {
 
         <section className="collections-showcase">
           {loading ? (
-            <div className="collections-loading">Loading collections...</div>
+            <PageLoader text="Loading collections..." />
           ) : collections.length > 0 ? (
             <div className="collections-editorial-grid">
               {collections.map((collection, index) => (

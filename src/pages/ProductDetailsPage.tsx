@@ -411,8 +411,13 @@ const ProductDetailsPage = () => {
 
         <main className="product-details-loading">
           <div>
+            <div className="page-loader-icon">
+              <span aria-hidden="true" style={{ fontSize: "28px" }}>
+                &#10024;
+              </span>
+            </div>
             <span>MYKA</span>
-            <p>Loading jewellery...</p>
+            <p>Loading Product Details...</p>
           </div>
         </main>
 
